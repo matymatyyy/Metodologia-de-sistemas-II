@@ -1,0 +1,201 @@
+Explicación paso a paso — docker-compose.yml y Dockerfiles
+
+──────────────────────────────
+1) Estructura general del proyecto
+──────────────────────────────
+
+El proyecto tendrá:
+📂 proyecto-docker/
+ ├── docker-compose.yml
+ ├── nginx/
+ │    └── default.conf
+ ├── php/
+ │    └── Dockerfile
+ ├── mariadb/
+ │    └── Dockerfile
+ └── src/
+      └── index.php
+
+──────────────────────────────
+2) docker-compose.yml explicado línea por línea
+──────────────────────────────
+
+services:
+# Aquí definimos los "servicios" o contenedores que va a levantar Docker Compose.
+
+  nginx:
+    image: nginx:latest
+    # Usa la imagen oficial de Nginx en su última versión disponible en Docker Hub.
+    ports:
+      - "8080:80"
+      # Expone el puerto 80 del contenedor en el puerto 8080 del host.
+    volumes:
+      - ./src:/var/www/html:ro
+      # Monta la carpeta ./src del host dentro de /var/www/html del contenedor.
+      # :ro significa "read-only" (solo lectura), Nginx no puede modificar estos archivos.
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      # Monta tus configuraciones personalizadas de Nginx en el contenedor.
+    depends_on:
+      php:
+        condition: service_started
+      # Nginx espera a que el servicio "php" haya iniciado antes de arrancar.
+    networks:
+      appnet:
+        aliases: [web]
+      # Conecta Nginx a la red "appnet".
+      # Le asigna un alias DNS "web" para que otros servicios puedan llamarlo por ese nombre.
+
+  php:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+      # Construye la imagen desde el Dockerfile que está en ./php
+    volumes:
+      - ./src:/var/www/html
+      # Monta la misma carpeta ./src para que PHP pueda leer y escribir archivos.
+    networks:
+      - appnet
+      # PHP se conecta a la misma red "appnet".
+    depends_on:
+      db:
+        condition: service_healthy
+      # PHP espera a que la base de datos esté "healthy" antes de iniciar.
+
+  db:
+    image: mariadb:10.5
+    # Usa MariaDB versión 10.5 desde Docker Hub.
+    restart: unless-stopped
+    # Si el contenedor falla, Docker lo reinicia automáticamente, a menos que lo detengas manualmente.
+    environment:
+      MARIADB_DATABASE: ${DB_NAME:-app}
+      # Nombre de la base de datos inicial. Toma la variable de entorno DB_NAME o "app" por defecto.
+      MARIADB_USER: ${DB_USER:-appuser}
+      # Usuario adicional de la base de datos.
+      MARIADB_PASSWORD: ${DB_PASSWORD:-apppass}
+      # Contraseña del usuario adicional.
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpass}
+      # Contraseña del usuario root.
+    volumes:
+      - db_data:/var/lib/mysql
+      # Persistencia de datos en un volumen llamado db_data.
+    networks:
+      - appnet
+      # DB se conecta a la misma red que los otros servicios.
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_ROOT_PASSWORD:-rootpass}"]
+      # Comando que comprueba si MariaDB está funcionando.
+      interval: 10s
+      # Cada 10 segundos ejecuta el test.
+      timeout: 5s
+      # Timeout máximo de 5 segundos para el test.
+      retries: 10
+      # Reintenta 10 veces antes de marcarlo como no saludable.
+      start_period: 30s
+      # Espera 30 segundos después de iniciar antes de empezar los checks.
+
+  phpmyadmin:
+    image: phpmyadmin:5
+    # Imagen oficial de phpMyAdmin versión 5.
+    ports:
+      - "8081:80"
+      # Acceso al panel de phpMyAdmin desde el host en el puerto 8081.
+    environment:
+      PMA_HOST: db
+      # Indica que phpMyAdmin se conecta al contenedor "db".
+      UPLOAD_LIMIT: 64M
+      # Limite de subida de archivos para phpMyAdmin.
+    depends_on:
+      db:
+        condition: service_started
+      # Espera a que la DB esté iniciada antes de levantar phpMyAdmin.
+    networks:
+      - appnet
+      # Conectado a la misma red que los demás.
+
+volumes:
+  db_data:
+  # Volumen persistente para la base de datos.
+
+networks:
+  appnet:
+    driver: bridge
+    # Red de tipo bridge para que los servicios se vean entre sí dentro de Docker.
+
+──────────────────────────────
+3) php/Dockerfile explicado línea por línea
+──────────────────────────────
+
+FROM php:8.3-fpm
+# Imagen oficial de PHP con FPM (FastCGI Process Manager).
+
+RUN docker-php-ext-install mysqli pdo pdo_mysql
+# Instalamos extensiones necesarias para conectarnos a MySQL/MariaDB.
+
+WORKDIR /var/www/html
+# Directorio de trabajo dentro del contenedor.
+
+──────────────────────────────
+4) nginx/default.conf explicado línea por línea
+──────────────────────────────
+
+server {
+    listen 80;
+    # Escucha en el puerto 80.
+
+    server_name localhost;
+    # Nombre del servidor (localhost para desarrollo). (en nuestro caso server_name _; el _ es como comodin)
+
+    root /var/www/html;
+    # Carpeta raíz donde está el código PHP. (donde busca el index .php en este caso dentro de SRC porque en el docker-compose.yml configuramos volumes:- ./src:/var/www/html, para sacarlo afuera borra el src:)
+
+    index index.php index.html;
+    # Archivos por defecto que busca servir.
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+        # Si no encuentra el archivo, pasa la petición a index.php.
+    }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass php:9000;
+        # Conecta con el contenedor PHP en el puerto 9000.
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+}
+
+──────────────────────────────
+5) src/index.php explicado
+──────────────────────────────
+
+<?php
+phpinfo();
+# Muestra la configuración de PHP para verificar que todo funciona.
+?>
+
+──────────────────────────────
+6) Comandos para levantar el entorno
+──────────────────────────────
+
+docker compose up -d
+# Levanta todos los servicios en segundo plano.
+
+docker compose down
+# Apaga y elimina los contenedores.
+
+──────────────────────────────
+7) Notas sobre la red (network)
+──────────────────────────────
+
+- Todos los servicios están conectados a la red `app_network`.
+- Esto permite que Nginx pueda comunicarse con PHP usando `php:9000` y PHP con MariaDB usando `mariadb:3306`.
+- Docker asigna DNS interno para que los nombres de servicio sean reconocidos.
+
+──────────────────────────────
+8) Acceso
+──────────────────────────────
+
+- Navegador: http://localhost:8080 → debería mostrar `phpinfo()`.
+- Base de datos: host `mariadb`, usuario `testuser`, pass `testpass`.
+- http://localhost:8081 phpmyadmin
