@@ -1,0 +1,29 @@
+# Si queremos que el phpmyadmin este en un contenedor propio y no dependa solo de este de metodologia de sistemas deberemos correr el docker-compose.phpmyadmin.yaml por fuera de la carpeta metodologia-de-sistemas-ii, sino pueden correrlo aca mismo y se va a levantar dentro del contenedor del proyecto, si lo hacemos por fuera nos queda separado de este proyecto, aunq de las dos formas si tenemos distintos proyectos en las mismas networks o esas distintas networks se las agregamos al docker-compose de phpmyadmin podriamos integrar todas las bases de datos dentro de ese contenedor de phpmyadmin
+services:
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"   # Entras por http://localhost:8081
+    environment:
+      # Permite conectarte a cualquier MySQL de las redes en las que este
+      - PMA_ARBITRARY=1
+      # Si lo queres fijar a un MySQL en particular, usa:
+      # - PMA_HOST='nombre del contenedor'
+      # - PMA_USER=root
+      # - PMA_PASSWORD=${PASSWORD_DB}
+    networks:
+      - appnet
+      # Si queres que phpMyAdmin vea otros proyectos,
+      # podes descomentar y agregar mas networks:
+      # - otra-network
+      # - tercer-network
+
+networks:
+  appnet:
+    external: true
+  # otra-network:
+  #   external: true
+  # tercer-network:
+  #   external: true
