@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: mysql:3306
--- Tiempo de generación: 23-09-2025 a las 02:56:05
+-- Tiempo de generación: 26-09-2025 a las 02:42:15
 -- Versión del servidor: 5.7.44
 -- Versión de PHP: 8.2.28
 
@@ -31,6 +31,7 @@ CREATE TABLE `carreras` (
   `id` int(11) NOT NULL,
   `titulo` varchar(255) COLLATE utf8_spanish_ci NOT NULL,
   `duracion` date NOT NULL,
+  `cupos` int(11) NOT NULL,
   `activo` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
@@ -61,8 +62,20 @@ CREATE TABLE `inscripciones` (
   `email` varchar(255) COLLATE utf8_spanish_ci NOT NULL,
   `telefono` varchar(255) COLLATE utf8_spanish_ci NOT NULL,
   `dni` int(11) NOT NULL,
-  `año` date NOT NULL,
+  `fecha` date NOT NULL,
   `activo` tinyint(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `modulos`
+--
+
+CREATE TABLE `modulos` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(255) COLLATE utf8_spanish_ci NOT NULL,
+  `ruta` varchar(255) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 -- --------------------------------------------------------
@@ -77,6 +90,18 @@ CREATE TABLE `noticias` (
   `descripcion` text COLLATE utf8_spanish_ci NOT NULL,
   `fecha` date NOT NULL,
   `imagen` varchar(255) COLLATE utf8_spanish_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `permisos`
+--
+
+CREATE TABLE `permisos` (
+  `id` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `id_modulo` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 -- --------------------------------------------------------
@@ -119,10 +144,24 @@ ALTER TABLE `inscripciones`
   ADD KEY `id_carrera` (`id_carrera`);
 
 --
+-- Indices de la tabla `modulos`
+--
+ALTER TABLE `modulos`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `noticias`
 --
 ALTER TABLE `noticias`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `permisos`
+--
+ALTER TABLE `permisos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_usuario` (`id_usuario`),
+  ADD KEY `id_modulo` (`id_modulo`);
 
 --
 -- Indices de la tabla `usuarios`
@@ -153,9 +192,21 @@ ALTER TABLE `inscripciones`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `modulos`
+--
+ALTER TABLE `modulos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `noticias`
 --
 ALTER TABLE `noticias`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `permisos`
+--
+ALTER TABLE `permisos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
