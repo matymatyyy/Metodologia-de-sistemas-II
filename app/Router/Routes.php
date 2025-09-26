@@ -7,7 +7,9 @@ function startRouter(): Router
 {
     $routes = [];
 
-    $routes = array_merge($routes, );
+    include_once "Routes/UsuarioRoutes.php";
+    $routes = array_merge($routes, UsuarioRoutes::getRoutes());
+
 
     $routesClass = [];
     foreach ($routes as $route) {
