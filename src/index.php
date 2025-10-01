@@ -1,25 +1,22 @@
 <?php
-echo "<h1>Docker para Metodologias 2</h1>";
-echo "<h2>Nginx + PHP-FPM + MariaDB</h2>";
-echo "<p>PHP Version: " . PHP_VERSION . "</p>";
 
-$env = function($k, $d=null){ $v = getenv($k); return $v !== false ? $v : $d; };
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-$dsn = 'mysql:host=db;dbname=' . $env('DB_NAME', 'app') . ';charset=utf8mb4';
-$user = $env('DB_USER', 'appuser');
-$pass = $env('DB_PASSWORD', 'apppass');
+require_once __DIR__ . "/../app/Router/Routes.php";
 
 try {
-    $pdo = new PDO($dsn, $user, $pass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    ]);
-    echo "<p>✅ Conexión a MariaDB OK</p>";
-    $stmt = $pdo->query('SELECT NOW() as now');
-    $row = $stmt->fetch();
-    echo "<p>Hora DB: " . htmlspecialchars($row['now']) . "</p>";
-} catch (PDOException $e) {
-    echo "<p>❌ Error DB: " . htmlspecialchars($e->getMessage()) . "</p>";
-}
+    $router = startRouter();
 
-phpinfo(INFO_MODULES);
+    $url = $_SERVER['REQUEST_URI'];
+    $method = $_SERVER['REQUEST_METHOD'];
+
+    $router->resolve($url, $method);
+} catch (Exception $e) {
+    http_response_code(404);
+    echo "<h1>Error 404</h1>";
+    echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
+    echo "<pre>URL: " . htmlspecialchars($url ?? 'N/A') . "</pre>";
+    echo "<pre>Method: " . htmlspecialchars($method ?? 'N/A') . "</pre>";
+    echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
+}

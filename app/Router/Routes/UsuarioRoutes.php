@@ -1,4 +1,4 @@
-<<?php 
+<?php 
 
 final readonly class UsuarioRoutes {
   public static function getRoutes(): array {

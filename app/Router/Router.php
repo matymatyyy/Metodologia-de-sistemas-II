@@ -19,7 +19,7 @@ final readonly class Router {
             throw new Exception("Ruta no encontrada");
         }
 
-        require_once $_SERVER["DOCUMENT_ROOT"]."/src/Controllers/".$route->controller();
+        require_once $_SERVER["DOCUMENT_ROOT"]."/Controllers/".$route->controller();
         
         $parameters = $this->getParameters($route, $url);
 
