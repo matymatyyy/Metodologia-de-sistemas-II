@@ -44,23 +44,22 @@ services:
       retries: 10
       start_period: 30s
 
-  # phpmyadmin:  # Lo muteamos aca ya que se correria externo
-  #   image: phpmyadmin:5
-  #   ports:
-  #     - "8081:80"
-  #   environment:
-  #     PMA_HOST: db
-  #     UPLOAD_LIMIT: 64M
-  #   depends_on:
-  #     db:
-  #       condition: service_started
-  #   networks:
-  #     - appnet
+  phpmyadmin:
+    image: phpmyadmin:5
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      UPLOAD_LIMIT: 64M
+    depends_on:
+      db:
+        condition: service_started
+    networks:
+      - appnet
 
 volumes:
   db_data:
 
 networks:
   appnet:
-    # driver: bridge # Esto lo muteamos ya que necesitamos que la network sea externa para que se pueda comunicar con phpMyAdmin 
-    external: true
+    driver: bridge
