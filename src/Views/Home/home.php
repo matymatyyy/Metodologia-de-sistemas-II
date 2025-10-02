@@ -32,7 +32,7 @@
                     <a href="#about" class="btn-primary">
                         Oferta Académica <i class="fas fa-arrow-right"></i>
                     </a>
-                    <a href="#contact" class="btn-secondary">
+                    <a href="/Views/Contacto/index.php" class="btn-secondary">
                         Contáctanos <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
