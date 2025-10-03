@@ -10,10 +10,6 @@ function startRouter(): Router
     include_once "Routes/UsuarioRoutes.php";
     $routes = array_merge($routes, UsuarioRoutes::getRoutes());
 
-    include_once "Routes/AdminRoutes.php";
-    $routes = array_merge($routes, AdminRoutes::getRoutes());
-
-
     $routesClass = [];
     foreach ($routes as $route) {
         $routesClass[] = Route::fromArray($route);

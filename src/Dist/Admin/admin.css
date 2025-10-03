@@ -38,6 +38,7 @@ body {
 
 .header .logo img {
     max-height: 40px;
+    margin-right: 6px;
 }
 
 /* User Avatar */
@@ -103,8 +104,19 @@ body {
     padding: 0;
 }
 
+.header-nav .nav-icon {
+    font-size: 22px;
+    color: #012970;
+    margin-right: 25px;
+    position: relative;
+}
+
 .header-nav .nav-profile {
     color: #012970;
+}
+
+.header-nav .nav-profile img {
+    max-height: 36px;
 }
 
 .header-nav .profile {
@@ -279,53 +291,27 @@ body {
     color: #4154f1;
 }
 
-/* Sidebar collapsed state - solo en desktop */
-@media (min-width: 1200px) {
-    .toggle-sidebar .sidebar-nav .nav-link span {
-        display: none;
-    }
-
-    .toggle-sidebar .sidebar-nav .nav-heading {
-        display: none;
-    }
-
-    .toggle-sidebar #sidebar {
-        padding: 20px 10px;
-    }
-
-    .toggle-sidebar .sidebar-nav .nav-link {
-        justify-content: center;
-        padding: 10px;
-    }
-
-    .toggle-sidebar .sidebar-nav .nav-link i {
-        margin-right: 0;
-        font-size: 24px;
-    }
+/* Sidebar collapsed state */
+.toggle-sidebar .sidebar-nav .nav-link span {
+    display: none;
 }
 
-/* Sidebar hover state - expandir al pasar el mouse */
-.toggle-sidebar.sidebar-hover #sidebar {
-    width: var(--sidebar-width);
-    padding: 20px;
+.toggle-sidebar .sidebar-nav .nav-heading {
+    display: none;
 }
 
-.toggle-sidebar.sidebar-hover .sidebar-nav .nav-link span {
-    display: inline;
+.toggle-sidebar #sidebar {
+    padding: 20px 10px;
 }
 
-.toggle-sidebar.sidebar-hover .sidebar-nav .nav-heading {
-    display: block;
+.toggle-sidebar .sidebar-nav .nav-link {
+    justify-content: center;
+    padding: 10px;
 }
 
-.toggle-sidebar.sidebar-hover .sidebar-nav .nav-link {
-    justify-content: flex-start;
-    padding: 10px 15px;
-}
-
-.toggle-sidebar.sidebar-hover .sidebar-nav .nav-link i {
-    margin-right: 10px;
-    font-size: 20px;
+.toggle-sidebar .sidebar-nav .nav-link i {
+    margin-right: 0;
+    font-size: 24px;
 }
 
 /* ======= Main Content ======= */

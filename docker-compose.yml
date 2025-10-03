@@ -4,7 +4,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - .:/var/www/html:ro
+      - ./src:/var/www/html:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
     depends_on:
       php:
@@ -18,7 +18,7 @@ services:
       context: ./php
       dockerfile: Dockerfile
     volumes:
-      - .:/var/www/html
+      - ./src:/var/www/html
     networks:
       - appnet
     depends_on:
