@@ -212,7 +212,7 @@
     }
 
     .sidebar-nav .nav-link.collapsed {
-      color: #012970;
+      color: #0e254cff;
       background: #fff;
     }
 
@@ -249,7 +249,7 @@
 
     .toggle-sidebar .sidebar-nav .nav-link i {
       margin-right: 0;
-      font-size: 24px;
+      font-size: 20px;
     }
 
     /* ======= Main Content ======= */
@@ -279,6 +279,16 @@
       font-weight: 600;
       color: #012970;
     }
+
+
+#header .logo img {
+  height: 100px !important;  /* probá con 80, 90, 100 */
+  width: auto !important;
+}
+
+
+
+
   </style>
 </head>
 
@@ -288,10 +298,11 @@
   <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="index.html"  class="logo d-flex align-items-center">
         <span class="d-none d-lg-block">Mi Panel</span>
-      </a>
+        </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
+        <img src="logoUTN.png" alt="Logo" style="height:90px; width:auto;">
     </div>
 
     <nav class="header-nav ms-auto">
@@ -300,7 +311,7 @@
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="https://via.placeholder.com/36" alt="Profile" class="rounded-circle">
+            <img src="usuario.png" alt="Profile" class="rounded-circle">
             <span class="d-none d-md-block dropdown-toggle ps-2">Usuario</span>
           </a>
 
