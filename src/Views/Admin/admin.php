@@ -1,3 +1,7 @@
+<?php
+    $_SESSION['usuario'] = "Admin";
+    $_SESSION['rol'] = "Secretario";
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -212,7 +216,7 @@
     }
 
     .sidebar-nav .nav-link.collapsed {
-      color: #0e254cff;
+      color: #012970;
       background: #fff;
     }
 
@@ -249,7 +253,7 @@
 
     .toggle-sidebar .sidebar-nav .nav-link i {
       margin-right: 0;
-      font-size: 20px;
+      font-size: 24px;
     }
 
     /* ======= Main Content ======= */
@@ -279,185 +283,116 @@
       font-weight: 600;
       color: #012970;
     }
-
-
-#header .logo img {
-  height: 100px !important;  /* probá con 80, 90, 100 */
-  width: auto !important;
-}
-
-
-
-
   </style>
 </head>
-
 <body>
 
-  <!-- ======= Header ======= -->
-  <header id="header" class="header fixed-top d-flex align-items-center">
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html"  class="logo d-flex align-items-center">
+      <a href="index.html" class="logo d-flex align-items-center">
         <span class="d-none d-lg-block">Mi Panel</span>
-        </a>
+      </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
-        <img src="logoUTN.png" alt="Logo" style="height:90px; width:auto;">
     </div>
 
-    <nav class="header-nav ms-auto">
-      <ul class="d-flex align-items-center">
-
-        <li class="nav-item dropdown pe-3">
+        <nav class="header-nav ms-auto">
+            <ul class="d-flex align-items-center">
+                <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="usuario.png" alt="Profile" class="rounded-circle">
+            <img src="https://via.placeholder.com/36" alt="Profile" class="rounded-circle">
             <span class="d-none d-md-block dropdown-toggle ps-2">Usuario</span>
           </a>
 
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-            <li class="dropdown-header">
-              <h6>Nombre Usuario</h6>
-              <span>Cargo/Rol</span>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
 
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="perfil.html">
-                <i class="bi bi-person"></i>
-                <span>Mi Perfil</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
+                        <li class="dropdown-header">
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar-large">
+                                    <?php echo strtoupper(substr($_SESSION['usuario'], 0, 1)); ?>
+                                </div>
+                                <div class="ms-3">
+                                    <h6 class="mb-1"><?php echo $_SESSION['usuario']; ?></h6>
+                                    <span class="badge bg-primary"><?php echo $_SESSION['rol']; ?></span>
+                                </div>
+                            </div>
+                        </li>
 
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="configuracion.html">
-                <i class="bi bi-gear"></i>
-                <span>Configuración</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
 
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="ayuda.html">
-                <i class="bi bi-question-circle"></i>
-                <span>¿Necesitas ayuda?</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center text-danger" href="#">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Cerrar Sesión</span>
+                            </a>
+                        </li>
 
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="logout.html">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Cerrar Sesión</span>
-              </a>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+        <ul class="sidebar-nav" id="sidebar-nav">
+
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">
+                    <i class="bi bi-grid"></i>
+                    <span>Dashboard</span>
+                </a>
             </li>
 
-          </ul>
-        </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#">
+                    <i class="bi bi-mortarboard"></i>
+                    <span>Carreras</span>
+                </a>
+            </li>
 
-      </ul>
-    </nav>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Inscripciones</span>
+                </a>
+            </li>
 
-  </header>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#">
+                    <i class="bi bi-journal-bookmark"></i>
+                    <span>Carreras Plan</span>
+                </a>
+            </li>
 
-  <!-- ======= Sidebar ======= -->
-  <aside id="sidebar" class="sidebar">
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#">
+                    <i class="bi bi-newspaper"></i>
+                    <span>Noticias</span>
+                </a>
+            </li>
 
-    <ul class="sidebar-nav" id="sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#">
+                    <i class="bi bi-people"></i>
+                    <span>Usuarios</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
 
-      <li class="nav-item">
-        <a class="nav-link" href="index.html">
-          <i class="bi bi-grid"></i>
-          <span>Dashboard</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
-          <i class="bi bi-mortarboard"></i>
-          <span>Carreras</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
-          <i class="bi bi-file-earmark-text"></i>
-          <span>Inscripciones</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
-          <i class="bi bi-journal-bookmark"></i>
-          <span>Carreras Plan</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
-          <i class="bi bi-newspaper"></i>
-          <span>Noticias</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
-          <i class="bi bi-people"></i>
-          <span>Usuarios</span>
-        </a>
-      </li>
-
-    </ul>
-
-  </aside>
-
-  <!-- ======= Main Content ======= -->
-  <main id="main" class="main">
-
-    <div class="pagetitle">
-      <h1>Bienvenido</h1>
-    </div>
-
-    <section class="section">
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Contenido Principal</h5>
-              <p>Aquí va el contenido de tu aplicación.</p>
-            </div>
-          </div>
+    <!-- ======= Main Content ======= -->
+    <main id="main" class="main">
+        <div class="pagetitle">
+            <h1>Bienvenido al panel, <?php echo $_SESSION['usuario']; ?></h1>
         </div>
-      </div>
-    </section>
+    </main>
 
-  </main>
-
-  <!-- Vendor JS Files -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Template Main JS File -->
-  <script>
-    // Toggle sidebar functionality
-    document.addEventListener('DOMContentLoaded', function() {
-      const toggleBtn = document.querySelector('.toggle-sidebar-btn');
-
-      if (toggleBtn) {
-        toggleBtn.addEventListener('click', function() {
-          document.body.classList.toggle('toggle-sidebar');
-        });
-      }
-    });
-  </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../Dist/Admin/admin.js"></script>
 </body>
 </html>

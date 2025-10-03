@@ -16,7 +16,4 @@ try {
     http_response_code(404);
     echo "<h1>Error 404</h1>";
     echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
-    echo "<pre>URL: " . htmlspecialchars($url ?? 'N/A') . "</pre>";
-    echo "<pre>Method: " . htmlspecialchars($method ?? 'N/A') . "</pre>";
-    echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
 }
