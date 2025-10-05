@@ -1,4 +1,4 @@
-<<?php 
+<?php 
 
 final readonly class UsuarioRoutes {
   public static function getRoutes(): array {
@@ -12,7 +12,7 @@ final readonly class UsuarioRoutes {
       [
         "name" => "usuario_login",
         "url" => "/usuario/login",
-        "controller" => "Usuario/UsuarioLoginController.php",
+        "controller" => "Usuario/UserLoginController.php",
         "method" => "POST"
       ],
       [
