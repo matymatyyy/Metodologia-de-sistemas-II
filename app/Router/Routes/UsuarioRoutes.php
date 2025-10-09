@@ -12,7 +12,7 @@ final readonly class UsuarioRoutes {
       [
         "name" => "usuario_login",
         "url" => "/usuario/login",
-        "controller" => "Usuario/UserLoginController.php",
+        "controller" => "User/UserLoginController.php",
         "method" => "POST"
       ],
       [
