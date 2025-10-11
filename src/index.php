@@ -1,25 +1,46 @@
 <?php
-echo "<h1>Docker para Metodologias 2</h1>";
-echo "<h2>Nginx + PHP-FPM + MariaDB</h2>";
-echo "<p>PHP Version: " . PHP_VERSION . "</p>";
 
-$env = function($k, $d=null){ $v = getenv($k); return $v !== false ? $v : $d; };
+require_once dirname(__DIR__).'/html/vendor/autoload.php';
 
-$dsn = 'mysql:host=db;dbname=' . $env('DB_NAME', 'app') . ';charset=utf8mb4';
-$user = $env('DB_USER', 'appuser');
-$pass = $env('DB_PASSWORD', 'apppass');
+require_once dirname(__DIR__).'/html/app/Router/Routes.php';
+
+require_once dirname(__DIR__).'/html/app/Autoloader/Autoloader.php';
+
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load(); 
+
+
+spl_autoload_register(
+    function ($class): void {
+        Autoloader::register($class, [
+            "src/Services",
+            "src/Infrastructure",
+            "src/Models",
+            "src/Entity"
+        ]);
+    }
+);
+
+@session_start();
+
+
+$router = startRouter();
+
+
+$url = $_SERVER["REQUEST_URI"];
 
 try {
-    $pdo = new PDO($dsn, $user, $pass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    
+    $router->resolve(
+        $url,
+        $_SERVER['REQUEST_METHOD']
+    );
+} catch (Exception $e) {   
+    
+    header("HTTP/1.0 404 Not Found");
+    echo json_encode([
+        "status" => 404,
+        "message"=> $e->getMessage()
     ]);
-    echo "<p>✅ Conexión a MariaDB OK</p>";
-    $stmt = $pdo->query('SELECT NOW() as now');
-    $row = $stmt->fetch();
-    echo "<p>Hora DB: " . htmlspecialchars($row['now']) . "</p>";
-} catch (PDOException $e) {
-    echo "<p>❌ Error DB: " . htmlspecialchars($e->getMessage()) . "</p>";
 }
-
-phpinfo(INFO_MODULES);
