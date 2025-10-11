@@ -9,6 +9,8 @@ function startRouter(): Router
 
     include_once "Routes/UsuarioRoutes.php";
     $routes = array_merge($routes, UsuarioRoutes::getRoutes());
+    include_once "Routes/HomeRoutes.php";
+    $routes = array_merge($routes, HomeRoutes::getRoutes());
 
 
     $routesClass = [];
