@@ -14,7 +14,7 @@ final readonly class UserModel extends DatabaseModel {
                     SELECT
                         U.*
                     FROM
-                        users U
+                        usuarios U
                     WHERE
                         U.email = :email
                 SELECT_QUERY;
@@ -44,7 +44,7 @@ final readonly class UserModel extends DatabaseModel {
                     SELECT
                         U.*
                     FROM
-                        users U
+                        usuarios U
                     WHERE
                         U.token = :token AND :date <= U.token_auth_date
                 SELECT_QUERY;
@@ -64,13 +64,13 @@ final readonly class UserModel extends DatabaseModel {
         $query = <<<SELECT_QUERY
                     SELECT
                         U.id,
-                        U.name,
+                        U.nombre,
                         U.email,
-                        U.password,
+                        U.contraseña,
                         U.token,
                         U.token_auth_date
                     FROM
-                        users U
+                        usuarios U
                     WHERE
                         U.id = :id
                 SELECT_QUERY;
@@ -90,13 +90,13 @@ final readonly class UserModel extends DatabaseModel {
         $query = <<<SELECT_QUERY
                     SELECT
                         C.id,
-                        C.name,
+                        C.nombre,
                         C.email,
-                        C.password,
+                        C.contraseña,
                         C.token,
                         C.token_auth_date
                     FROM 
-                        users C
+                        usuarios C
                 SELECT_QUERY;
 
         $primitiveResults = $this->primitiveQuery($query);
@@ -113,16 +113,16 @@ final readonly class UserModel extends DatabaseModel {
     public function insert(User $user): void
     {
         $query = <<<INSERT_QUERY
-                INSERT INTO users
-                (name, email, password, token, token_auth_date)
+                INSERT INTO usuarios
+                (nombre, email, contraseña, token, token_auth_date)
                 VALUES
-                (:name, :email, :password, :token, :tokenAuthDate)
+                (:nombre, :email, :contraseña, :token, :tokenAuthDate)
                 INSERT_QUERY;
 
         $parameters = [
-            "name" => $user->name(),
+            "nombre" => $user->name(),
             "email" => $user->email(),
-            "password" => $user->password(),
+            "contraseña" => $user->password(),
             "token" => $user->token(),
             "tokenAuthDate" => $user->tokenAuthDate()?->format("Y-m-d H:i:s")
         ];
@@ -134,7 +134,7 @@ final readonly class UserModel extends DatabaseModel {
     {
         $query = <<<SELECT_QUERY
                     UPDATE
-                        users
+                        usuarios
                     SET
                         token = :token,
                         token_auth_date = :date
@@ -155,19 +155,19 @@ final readonly class UserModel extends DatabaseModel {
     {
         $query = <<<SELECT_QUERY
                     UPDATE
-                        users
+                        usuarios
                     SET
-                        name = :name,
+                        nombre = :nombre,
                         email = :email,
-                        password = :password
+                        contraseña = :contraseña
                     WHERE
                         id = :id
                 SELECT_QUERY;
 
         $parameters = [
-            'name' => $user->name(),
+            'nombre' => $user->name(),
             'email' => $user->email(),
-            'password' => $user->password(),
+            'contraseña' => $user->password(),
             'id' => $user->id()
         ];
 
@@ -178,7 +178,7 @@ final readonly class UserModel extends DatabaseModel {
     {
         $query = <<<DELETE_QUERY
                     DELETE FROM
-                        users 
+                        usuarios 
                     WHERE
                         id = :id
                 DELETE_QUERY;
@@ -198,9 +198,9 @@ final readonly class UserModel extends DatabaseModel {
 
         return new User(
             $primitive['id'],
-            $primitive['name'],
+            $primitive['nombre'],
             $primitive['email'],
-            $primitive['password'],
+            $primitive['contraseña'],
             $primitive['token'],
             empty($primitive['token_auth_date']) ? null : new DateTime($primitive['token_auth_date']),
         );

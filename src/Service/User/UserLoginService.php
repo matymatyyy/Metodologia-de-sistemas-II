@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Src\Service\User;
+namespace src\Service\User;
 
 use Src\Entity\User\Exception\UserNotFoundException;
 use Src\Entity\User\User;
@@ -31,5 +31,4 @@ final readonly class UserLoginService {
 
         return $user;
     }
-
 }

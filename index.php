@@ -14,10 +14,11 @@ $dotenv->load();
 spl_autoload_register(
     function ($class): void {
         Autoloader::register($class, [
-            "src/Services",
+            "src/Service",
             "src/Infrastructure",
-            "src/Models",
-            "src/Entity"
+            "src/Model",
+            "src/Entity",
+            "src/Utils"
         ]);
     }
 );
