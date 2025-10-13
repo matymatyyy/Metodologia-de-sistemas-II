@@ -2,7 +2,7 @@
     <div class="nav-container">
         <a href="#home" class="logo">
             <div class="logo-icon">
-                <img src="../../Dist/Image/image.webp" alt="UTN Logo">
+                <img src="src/Dist/Image/image.webp" alt="UTN Logo">
             </div>
             <span class="logo-text">UTN</span>
         </a>

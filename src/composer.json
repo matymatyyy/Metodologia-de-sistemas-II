@@ -1,8 +1,0 @@
-{
-    "name": "app/proyecto",
-    "description": "proyecto utn",
-    "type": "project",
-    "license": "MIT",
-    "minimum-stability": "stable",
-    "require": {}
-}

@@ -1,4 +1,4 @@
-<<?php 
+<?php 
 
 final readonly class HomeRoutes {
   public static function getRoutes(): array {
