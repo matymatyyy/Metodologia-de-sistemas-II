@@ -50,7 +50,13 @@ final readonly class CarreraRoutes {
             "type" => "int"
           ]
         ]
-      ]
+      ] ,     
+      [
+        "name" => "carrera_view",
+        "url" => "/carreras",
+        "controller" => "Carrera/CarreraViewController.php",
+        "method" => "GET"
+      ],
     ];
   }
 }
