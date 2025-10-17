@@ -5,22 +5,23 @@ declare(strict_types = 1);
 namespace Src\Service\carrera;
 
 use DateTime;
-use Src\Model\carrera\carreraModel;
+use Src\Model\carrera\CarreraModel;
 
 final readonly class carreraUpdaterService {
 
-    private carreraModel $model;
-    private carreraFinderService $finder;
+    private CarreraModel $model;
+    private CarreraFinderService $finder;
 
     public function __construct() 
     {
-        $this->model = new carreraModel();
-        $this->finder = new carreraFinderService();
+        $this->model = new CarreraModel();
+        $this->finder = new CarreraFinderService();
     }
 
     public function update(
         string $titulo,
-        DateTime $duracion, 
+        DateTime $fecha_inicio, 
+        DateTime $fecha_fin, 
         int $cupos, 
         ?int $activo, 
         int $id
@@ -28,7 +29,7 @@ final readonly class carreraUpdaterService {
     {
         $carrera = $this->finder->find($id);
 
-        $carrera->modify($titulo, $duracion, $cupos, $activo);
+        $carrera->modify($titulo, $fecha_inicio, $fecha_fin, $cupos, $activo);
 
         $this->model->update($carrera);
     }

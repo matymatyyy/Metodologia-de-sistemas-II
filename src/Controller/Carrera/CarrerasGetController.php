@@ -24,7 +24,8 @@ final readonly class CarrerasGetController extends AuthMiddleware {
         return fn (Carrera $carrera): array => [
             'id' => $carrera->id(),
             'titulo' => $carrera->titulo(),
-            'duracion' => $carrera->duracion()->format("Y-m-d H:m:s"),
+            'fecha_inicio' => $carrera->fechaInicio()->format("Y-m-d"),
+            'fecha_fin' => $carrera->fechaFin()->format("Y-m-d"),
             'cupos' => $carrera->cupos(),
             'activo' => $carrera->activo(),
         ];
