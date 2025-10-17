@@ -6,7 +6,7 @@ final readonly class CarreraViewController extends ViewController{
 
 
     public function __construct(){
-        parent::__construct("Carrera/carrera");
+        parent::__construct("Admin/carreras");
     }
 
     public function start(): void{
