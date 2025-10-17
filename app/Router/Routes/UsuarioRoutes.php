@@ -46,46 +46,16 @@ final readonly class UsuarioRoutes {
   public static function getRoutes(): array {
     return [
       [
-        "name" => "usuario_login_view",
-        "url" => "/usuario",
-        "controller" => "Usuario/UsuarioLoginViewController.php",
-        "method" => "GET"
-      ],
-      [
         "name" => "usuario_login",
-        "url" => "/usuario/login",
+        "url" => "/usuario",
         "controller" => "User/UserLoginController.php",
         "method" => "POST"
       ],
       [
-        "name" => "usuario_logout",
-        "url" => "/usuario/logout",
-        "controller" => "Usuario/UsuarioLogoutController.php",
+        "name" => "login_view",
+        "url" => "/login",
+        "controller" => "User/LoginViewController.php",
         "method" => "GET"
-      ],
-      [
-        "name" => "usuario_panel_view",
-        "url" => "/usuario/panel",
-        "controller" => "Usuario/UsuarioPanelViewController.php",
-        "method" => "GET",
-        "parameters" => [
-          [
-            "name" => "page",
-            "type" => "int"
-          ]
-        ]
-      ],
-      [
-        "name" => "login_view",           // Nombre interno de la ruta
-        "url" => "/login",                // URL que verá el usuario
-        "controller" => "User/LoginViewController.php", // Controlador que maneja GET
-        "method" => "GET"                 // Método HTTP
-      ],
-      [
-        "name" => "usuario_login_post",   // Nombre interno para login POST
-        "url" => "/usuario",              // URL de destino del formulario
-        "controller" => "User/UserLoginController.php", // Controlador que procesa login
-        "method" => "POST"                // Método HTTP para envío de formulario
       ]
     ];
   }
