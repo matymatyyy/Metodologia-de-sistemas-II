@@ -8,6 +8,7 @@ final class Carrera {
     public function __construct(
         private readonly ?int $id,
         private string $titulo,
+        private string $duracion,
         private DateTime $fecha_inicio,
         private DateTime $fecha_fin,
         private int $cupos,
@@ -17,6 +18,7 @@ final class Carrera {
 
     public static function create(
         string $titulo,
+        string $duracion,
         DateTime $fecha_inicio,
         DateTime $fecha_fin,
         int $cupos,
@@ -24,11 +26,12 @@ final class Carrera {
     ): self
     {
         $activo = $activo ?? 1;
-        return new self(null, $titulo, $fecha_inicio, $fecha_fin, $cupos, $activo);
+        return new self(null, $titulo, $duracion, $fecha_inicio, $fecha_fin, $cupos, $activo);
     }
 
     public function modify(
         string $titulo,
+        string $duracion,
         DateTime $fecha_inicio,
         DateTime $fecha_fin,
         int $cupos,
@@ -36,6 +39,7 @@ final class Carrera {
     ): void
     {
         $this->titulo = $titulo;
+        $this->duracion = $duracion;
         $this->fecha_inicio = $fecha_inicio;
         $this->fecha_fin = $fecha_fin;
         $this->cupos = $cupos;
@@ -49,6 +53,8 @@ final class Carrera {
     public function id(): ?int {return $this->id;}
 
     public function titulo(): string {return $this->titulo;}
+
+    public function duracion(): string {return $this->duracion;}
 
     public function fechaInicio(): DateTime {return $this->fecha_inicio;}
 

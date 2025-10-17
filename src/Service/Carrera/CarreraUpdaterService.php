@@ -20,6 +20,7 @@ final readonly class carreraUpdaterService {
 
     public function update(
         string $titulo,
+        string $duracion,
         DateTime $fecha_inicio, 
         DateTime $fecha_fin, 
         int $cupos, 
@@ -29,7 +30,7 @@ final readonly class carreraUpdaterService {
     {
         $carrera = $this->finder->find($id);
 
-        $carrera->modify($titulo, $fecha_inicio, $fecha_fin, $cupos, $activo);
+        $carrera->modify($titulo, $duracion, $fecha_inicio, $fecha_fin, $cupos, $activo);
 
         $this->model->update($carrera);
     }
