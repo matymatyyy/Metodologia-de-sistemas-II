@@ -190,59 +190,104 @@ function createRipple(event) {
 
 // Función para enviar el formulario
 function handleFormSubmit(e) {
-    e.preventDefault();  // prevenir envío normal
+    e.preventDefault(); // Prevenir envío normal para usar AJAX
     
     if (isLoading) {
-        return;  // evitar envios multiples
+        return;
     }
     
-    // obtener datos del formulario
+    // obtener datos del formulario para validación básica
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     
-    // validar campos
+    // validar campos antes de enviar
     if (!email || !password) {
         showLoginError('Por favor complete todos los campos');
         return;
     }
     
+    // Mostrar estado de carga
     isLoading = true;
     const btn = document.getElementById('loginBtn');
-    btn.classList.add('loading');  // mostrar el spinner
+    btn.classList.add('loading');
     
-    // hashear password con SHA-256 antes de enviar
-    hashPassword(password).then(hashedPassword => {
-        // enviar datos via AJAX al endpoint del backend
-        fetch('/usuario/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                email: email,
-                password: hashedPassword
-            })
+    // Limpiar errores anteriores
+    const existingError = document.querySelector('.login-error');
+    if (existingError) {
+        existingError.remove();
+    }
+    
+    // Enviar por AJAX
+    fetch('/usuario', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: new URLSearchParams({
+            email: email,
+            password: password
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Login successful:', data);
-            // aquí se manejará la respuesta exitosa cuando esté el panel
-            alert('Login exitoso! Token: ' + data.token);
-        })
-        .catch(error => {
-            console.error('Login error:', error);
-            showLoginError('Error de conexión con el servidor');
-        })
-        .finally(() => {
-            isLoading = false;
-            btn.classList.remove('loading');
-        });
-    }).catch(error => {
-        console.error('Hash error:', error);
-        showLoginError('Error al procesar la contraseña');
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        return response.json().then(data => Promise.reject(data));
+    })
+    .then(data => {
+        if (data.success) {
+            // Login exitoso - mostrar página de éxito y redirigir
+            showSuccessAndRedirect(data.user);
+        }
+    })
+    .catch(error => {
+        // Mostrar error en la misma página
+        const errorMessage = error.error || 'Error de conexión';
+        showLoginError(errorMessage);
+    })
+    .finally(() => {
         isLoading = false;
         btn.classList.remove('loading');
     });
+}
+
+// Función para mostrar éxito y redirigir
+function showSuccessAndRedirect(userName) {
+    // Crear overlay de éxito
+    const successOverlay = document.createElement('div');
+    successOverlay.innerHTML = `
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 9999; display: flex; align-items: center; justify-content: center;">
+            <div style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); border-radius: 25px; padding: 50px 40px; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1); text-align: center; max-width: 450px; width: 90%; animation: fadeInScale 0.8s ease-out;">
+                <div style="margin-bottom: 25px;">
+                    <img src="/src/Dist/Image/UTN_logo.jpg" alt="UTN Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(255,255,255,0.3);">
+                </div>
+                <div style="font-size: 4rem; color: #2ecc71; margin-bottom: 20px;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h1 style="color: white; font-size: 2rem; font-weight: 600; margin-bottom: 10px;">UTN Chacabuco</h1>
+                <p style="color: rgba(255,255,255,0.9); font-size: 1.1rem; margin-bottom: 30px;">Acceso Autorizado</p>
+                <p style="color: rgba(255,255,255,0.8); font-size: 1rem; margin-bottom: 25px;">Bienvenido/a, <strong>${userName}</strong></p>
+                <div style="margin: 25px 0;">
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden;">
+                        <div style="height: 100%; background: linear-gradient(90deg, #2ecc71, #27ae60); border-radius: 3px; animation: progress 2s ease-out;"></div>
+                    </div>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 15px;">Redirigiendo al Panel Administrativo...</p>
+                </div>
+            </div>
+        </div>
+        <style>
+            @keyframes fadeInScale { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+            @keyframes progress { from { width: 0%; } to { width: 100%; } }
+        </style>
+    `;
+    
+    document.body.appendChild(successOverlay);
+    
+    // Redirigir después de 2.5 segundos
+    setTimeout(() => {
+        window.location.href = '/admin';
+    }, 2500);
 }
 
 // mostrar mensaje de error cuando no se puede loguear
