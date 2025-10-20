@@ -14,12 +14,16 @@ final readonly class NewsGetController {
         $news = $this->service->find($id);
 
         echo json_encode([
-            "id" => $news->id(),
-            "title" => $news->title(),
-            "description" => $news->description(),
-            "text" => $news->text(),
-            "publicationDate" => $news->publicationDate()->format("Y-m-d"),
-            "image" => $news->image()
+            "success" => true,
+            "data" => [
+                "id" => $news->id(),
+                "titulo" => $news->title(),
+                "contenido" => $news->description(),
+                "texto" => $news->text(),
+                "fecha_publicacion" => $news->publicationDate()->format("Y-m-d"),
+                "publicado" => 1, // Por defecto publicado
+                "imagen_url" => $news->image()
+            ]
         ]);
     }
 }

@@ -13,10 +13,10 @@
     
     <link href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="src/Dist/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="src/Dist/DataTables/datatables.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
     
     <link href="src/Dist/Admin/admin.css" rel="stylesheet">
@@ -114,11 +114,10 @@
             </div>
     </main>
     
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="src/Dist/jQuery/jquery.min.js"></script> 
+    <script src="src/Dist/bootstrap/js/bootstrap.bundle.min.js"></script>
     
-    <script type="text/javascript" src="https://cdn.datatables.net/2.0.7/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/2.0.7/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" src="src/Dist/DataTables/datatables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
     
     <script src="src/Dist/Admin/admin.js"></script>
@@ -168,15 +167,29 @@
             // Busca todos los bloques <script> dentro del contenido dinámico
             const scripts = $('#contenidoDinamico').find('script');
             scripts.each(function() {
-                const newScript = document.createElement('script');
-                if ($(this).attr('src')) {
-                    newScript.src = $(this).attr('src'); // Script externo
-                } else {
-                    newScript.textContent = $(this).text(); // Código interno
+                try {
+                    if ($(this).attr('src')) {
+                        // Scripts externos - no los volvemos a cargar
+                        console.log('Script externo ignorado:', $(this).attr('src'));
+                    } else {
+                        // Ejecutar código JavaScript directamente
+                        const scriptContent = $(this).text();
+                        if (scriptContent.trim()) {
+                            // Añadir un pequeño delay para asegurar que todas las librerías estén cargadas
+                            setTimeout(function() {
+                                try {
+                                    // Usar Function constructor en lugar de eval para mejor contexto
+                                    new Function(scriptContent)();
+                                } catch (execError) {
+                                    console.error('Error ejecutando script retrasado:', execError);
+                                }
+                            }, 100); // 100ms de delay
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error ejecutando script:', error);
                 }
-                // Añade al DOM para su ejecución
-                document.body.appendChild(newScript);
-                // Elimina el script original para evitar duplicidad
+                // Elimina el script original
                 $(this).remove(); 
             });
         }

@@ -15,6 +15,7 @@ final readonly class NewsGetAllController extends AuthMiddleware {
     {
         $news = $this->service->getAll();
         echo json_encode([
+            "success" => true,
             "data" => array_map($this->toResponse(), $news),
         ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     }
@@ -23,11 +24,12 @@ final readonly class NewsGetAllController extends AuthMiddleware {
     {
         return fn (News $news): array => [
             'id' => $news->id(),
-            'title' => $news->title(),
-            'description' => $news->description(),
-            'text' => $news->text(),
-            'publicationDate' => $news->publicationDate()->format("Y-m-d"),
-            'image' => $news->image()
+            'titulo' => $news->title(),
+            'contenido' => $news->description(),
+            'texto' => $news->text(),
+            'fecha_publicacion' => $news->publicationDate()->format("Y-m-d"),
+            'publicado' => 1, // Por defecto publicado, ya que no hay campo en BD
+            'imagen_url' => $news->image() ? $news->image() : null
         ];
     }
 }

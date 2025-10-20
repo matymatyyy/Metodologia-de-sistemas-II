@@ -21,6 +21,8 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Título</th>
+                                        <th>Descripción</th>
+                                        <th>Texto</th>
                                         <th>Fecha Publicación</th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
@@ -55,8 +57,14 @@
 
                     <div class="mb-3">
                         <label for="contenido" class="form-label">Descripción de la Noticia <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="contenido" name="contenido" rows="5" placeholder="Descripción de la noticia" required></textarea>
-                        <small class="text-muted"></small>
+                        <textarea class="form-control" id="contenido" name="contenido" rows="3" placeholder="Descripción breve de la noticia" required></textarea>
+                        <small class="text-muted">Descripción corta que aparece en listados</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="texto" class="form-label">Texto Completo de la Noticia <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="texto" name="texto" rows="8" placeholder="Contenido completo de la noticia" required></textarea>
+                        <small class="text-muted">Texto completo del artículo</small>
                     </div>
 
                     <div class="mb-3">
@@ -75,15 +83,6 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="publicado" class="form-label">Estado de la Noticia <span class="text-danger">*</span></label>
-                        <select class="form-select" id="publicado" name="publicado" required>
-                            <option value="0">Inactivo (Borrador)</option>
-                            <option value="1">Activo (Publicado)</option>
-                        </select>
-                        <small class="text-muted">Selecciona "Activo" para publicar o "Inactivo" para guardar como borrador.</small>
-                    </div>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnCancelar">Cancelar</button>
@@ -99,230 +98,363 @@
 </div>
 
 <script>
-    let tablaNoticias;
-    const $btnGuardar = $('#btnGuardarNoticia');
-    const $spinner = $('#loadingSpinner');
-    const $saveIcon = $('#saveIcon');
-    const $imgActual = $('#img_actual'); 
-
-    $(document).ready(function() {
-        inicializarDataTableNoticias();
-        setButtonLoading(false); 
-    });
-
-    // Control de estado del botón de carga
-    function setButtonLoading(isLoading) {
-        if (isLoading) {
-            $btnGuardar.attr('disabled', true);
-            $saveIcon.hide();
-            $spinner.show();
-            $btnGuardar.contents().last().replaceWith(' Cargando...'); 
-        } else {
-            $btnGuardar.attr('disabled', false);
-            $spinner.hide();
-            $saveIcon.show();
-            $btnGuardar.contents().last().replaceWith(' Guardar Noticia'); 
+    // Evitar conflictos usando namespace global para noticias
+    window.NoticiasModule = (function() {
+        'use strict';
+        
+        // Variables locales al módulo
+        let tablaNoticias;
+        let $btnGuardar, $spinner, $saveIcon, $imgActual;
+        let isInitialized = false; // Flag para evitar doble inicialización
+        
+        // Control de estado del botón de carga
+        function setButtonLoading(isLoading) {
+            if (isLoading) {
+                $btnGuardar.attr('disabled', true);
+                $saveIcon.hide();
+                $spinner.show();
+                $btnGuardar.contents().last().replaceWith(' Cargando...'); 
+            } else {
+                $btnGuardar.attr('disabled', false);
+                $spinner.hide();
+                $saveIcon.show();
+                $btnGuardar.contents().last().replaceWith(' Guardar Noticia'); 
+            }
         }
-    }
 
-    // Inicializar DataTable 
-    function inicializarDataTableNoticias() {
-        tablaNoticias = $('#tablaNoticias').DataTable({
-            ajax: {
-                url: 'api/noticias.php', // <--- TU ENDPOINT DE LECTURA
-                type: 'GET',
-                dataSrc: function(json) {
-                    return json.success ? json.data : [];
-                },
-                error: function(xhr, error, thrown) {
-                    console.error('Error al cargar datos:', error);
-                    Swal.fire('Error', 'No se pudieron cargar las noticias', 'error');
-                }
-            },
-            columns: [
-                { data: 'id' },
-                { data: 'titulo', render: (data) => `<strong>${data}</strong>` },
-                { data: 'fecha_publicacion' },
-                { 
-                    data: 'publicado', 
-                    render: (data) => data == 1 ? 
-                        '<span class="badge bg-success">Activo (Publicado)</span>' : 
-                        '<span class="badge bg-warning text-dark">Inactivo (Borrador)</span>'
-                },
-                {
-                    data: null,
-                    orderable: false,
-                    render: (data, type, row) => `
-                        <div class="action-buttons">
-                            <button class="btn btn-sm btn-warning" onclick="editarNoticia(${row.id})" title="Editar">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="eliminarNoticia(${row.id})" title="Eliminar">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </div>`
-                }
-            ],
-            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
-            order: [[2, 'desc']], // Ordena por la columna de fecha (índice 2)
-            pageLength: 10,
-            responsive: true,
-            processing: true
-        });
-    }
-
-    // Nueva Noticia (Función de inicialización)
-    function nuevaNoticia() {
-        $('#formNoticia')[0].reset();
-        $('#noticia_id').val('');
-        $('#modalNoticiaLabel').text('Nueva Noticia');
-        $('#publicado').val('0'); // Inactivo por defecto
-        
-        // Establecer la fecha actual por defecto
-        const today = new Date().toISOString().split('T')[0];
-        $('#fecha_publicacion').val(today);
-        
-        // Ocultar y limpiar la vista previa de imagen
-        $('#vista_previa_imagen').hide(); 
-        $imgActual.attr('src', '');
-        
-        $('#modalNoticia').modal('show'); 
-    }
-
-    // Editar noticia
-    function editarNoticia(id) {
-        nuevaNoticia(); 
-        $('#modalNoticiaLabel').text('Cargando Noticia...'); 
-        
-        $.ajax({
-            url: `api/noticias.php?id=${id}`, // <--- TU ENDPOINT DE LECTURA POR ID
-            type: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                if(response.success) {
-                    const data = response.data;
-                    $('#noticia_id').val(data.id);
-                    $('#titulo').val(data.titulo);
-                    $('#contenido').val(data.contenido); 
-                    $('#fecha_publicacion').val(data.fecha_publicacion);
-                    
-                    // Cargar el valor del SELECT (0 o 1)
-                    $('#publicado').val(data.publicado.toString()); 
-                    
-                    $('#modalNoticiaLabel').text('Editar Noticia');
-
-                    // Mostrar imagen actual si existe 
-                    if (data.imagen_url) {
-                         $imgActual.attr('src', data.imagen_url); 
-                         $('#vista_previa_imagen').show();
+        // Inicializar DataTable 
+        function inicializarDataTableNoticias() {
+            try {
+                // Configuración local para el lenguaje (evita problemas de CORS)
+                const languageConfig = {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ entradas",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
                     }
-                    $('#modalNoticia').modal('show');
-                } else {
-                    Swal.fire('Error', 'No se pudo cargar la noticia', 'error');
+                };
+                
+                // Verificar que el elemento de la tabla existe
+                if (!$('#tablaNoticias').length) {
+                    console.error('Elemento #tablaNoticias no encontrado');
+                    return;
                 }
-            }
-        });
-    }
-
-    // Vista Previa de Imagen
-    $('#imagen_destacada').on('change', function() {
-        const [file] = this.files;
-        if (file) {
-            $imgActual.attr('src', URL.createObjectURL(file));
-            $('#vista_previa_imagen').show();
-        } else {
-            if (!$('#noticia_id').val() || !$imgActual.attr('src')) {
-                $('#vista_previa_imagen').hide();
-            }
-        }
-    });
-
-    // Guardar noticia (Crear o actualizar) - LÓGICA DE ENVÍO DE ARCHIVOS
-    $('#formNoticia').on('submit', function(e) {
-        e.preventDefault();
-        
-        // 1. Mostrar estado de carga (spinner)
-        setButtonLoading(true);
-
-        const formData = new FormData(this);
-        const id = $('#noticia_id').val();
-        
-        // Simular el método PUT si estamos editando
-        if (id) {
-            formData.append('_method', 'PUT'); 
-        }
-
-        $.ajax({
-            url: 'api/noticias.php', // <--- TU ENDPOINT DE PROCESAMIENTO
-            type: 'POST', // DEBE ser POST
-            data: formData, 
-            
-            // ¡VITALES para la subida de archivos!
-            processData: false, 
-            contentType: false, 
-            
-            dataType: 'json',
-            
-            success: function(response) {
-                if(response.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: response.message,
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                    $('#modalNoticia').modal('hide');
-                    tablaNoticias.ajax.reload(null, false);
-                } else {
-                    Swal.fire('Error', response.message, 'error');
-                }
-            },
-            error: function(xhr, status, error) {
-                // Mensaje detallado si la API no devuelve JSON válido o hay un error 500
-                console.error("AJAX Error:", status, error, xhr.responseText);
-                Swal.fire('Error', 'Ocurrió un error al guardar la noticia. Por favor, verifica tu script PHP.', 'error');
-            },
-            // 2. Ocultar estado de carga (spinner) al finalizar
-            complete: function() {
-                setButtonLoading(false);
-            }
-        });
-    });
-
-    // Eliminar noticia (mantenido)
-    function eliminarNoticia(id) {
-        Swal.fire({
-            title: '¿Está seguro?',
-            text: "Esta acción eliminará la noticia de forma permanente.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: 'api/noticias.php',
-                    type: 'DELETE',
-                    data: JSON.stringify({ id: id }),
-                    contentType: 'application/json',
-                    success: function(response) {
-                        if(response.success) {
-                            Swal.fire('Eliminado', response.message, 'success');
-                            tablaNoticias.ajax.reload(null, false);
-                        } else {
-                            Swal.fire('Error', response.message, 'error');
+                
+                tablaNoticias = $('#tablaNoticias').DataTable({
+                    destroy: true, // Permite destruir y recrear automáticamente
+                    ajax: {
+                        url: '/news',
+                        type: 'GET',
+                        dataSrc: function(json) {
+                            return json.success ? json.data : [];
+                        },
+                        error: function(xhr, error, thrown) {
+                            console.error('Error al cargar datos:', error);
+                            if (window.Swal) {
+                                Swal.fire('Error', 'No se pudieron cargar las noticias', 'error');
+                            } else {
+                                alert('Error al cargar las noticias');
+                            }
                         }
                     },
-                    error: function() {
-                        Swal.fire('Error', 'Error al eliminar la noticia', 'error');
-                    }
+                    columns: [
+                        { data: 'id' },
+                        { data: 'titulo', render: (data) => `<strong>${data}</strong>` },
+                        { 
+                            data: 'contenido', 
+                            render: (data) => data.length > 50 ? data.substring(0, 50) + '...' : data
+                        },
+                        { 
+                            data: 'texto', 
+                            render: (data) => data.length > 60 ? data.substring(0, 60) + '...' : data
+                        },
+                        { data: 'fecha_publicacion' },
+                        {
+                            data: null,
+                            render: () => '<span class="badge bg-success">Publicado</span>'
+                        },
+                        {
+                            data: null,
+                            orderable: false,
+                            render: (data, type, row) => `
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-warning" onclick="window.NoticiasModule.editarNoticia(${row.id})" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="window.NoticiasModule.eliminarNoticia(${row.id})" title="Eliminar">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>`
+                        }
+                    ],
+                    language: languageConfig,
+                    order: [[4, 'desc']], // Ordena por fecha_publicacion (ahora índice 4)
+                    pageLength: 10,
+                    responsive: true,
+                    processing: true,
+                    autoWidth: false,
+                    serverSide: false,
+                    deferRender: true
                 });
+                
+                console.log('DataTable inicializado correctamente');
+                
+            } catch (error) {
+                console.error('Error al inicializar DataTable:', error);
+                if (window.Swal) {
+                    Swal.fire('Error', 'Error al inicializar la tabla de noticias', 'error');
+                }
             }
-        });
-    }
+        }
+
+        // Nueva Noticia
+        function nuevaNoticia() {
+            $('#formNoticia')[0].reset();
+            $('#noticia_id').val('');
+            $('#modalNoticiaLabel').text('Nueva Noticia');
+            
+            const today = new Date().toISOString().split('T')[0];
+            $('#fecha_publicacion').val(today);
+            
+            $('#vista_previa_imagen').hide(); 
+            $imgActual.attr('src', '');
+            
+            $('#modalNoticia').modal('show'); 
+        }
+
+        // Editar noticia
+        function editarNoticia(id) {
+            nuevaNoticia(); 
+            $('#modalNoticiaLabel').text('Cargando Noticia...'); 
+            
+            $.ajax({
+                url: `/news?id=${id}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if(response.success) {
+                        const data = response.data;
+                        $('#noticia_id').val(data.id);
+                        $('#titulo').val(data.titulo);
+                        $('#contenido').val(data.contenido);
+                        $('#texto').val(data.texto);
+                        $('#fecha_publicacion').val(data.fecha_publicacion);
+                        $('#modalNoticiaLabel').text('Editar Noticia');
+
+                        if (data.imagen_url) {
+                            $imgActual.attr('src', data.imagen_url); 
+                            $('#vista_previa_imagen').show();
+                        }
+                        $('#modalNoticia').modal('show');
+                    } else {
+                        Swal.fire('Error', 'No se pudo cargar la noticia', 'error');
+                    }
+                }
+            });
+        }
+
+        // Guardar noticia
+        function guardarNoticia() {
+            setButtonLoading(true);
+
+            const formData = new FormData($('#formNoticia')[0]);
+            const id = $('#noticia_id').val();
+            
+            if (id) {
+                formData.append('_method', 'PUT'); 
+            }
+
+            $.ajax({
+                url: '/news',
+                type: 'POST',
+                data: formData,
+                processData: false, 
+                contentType: false, 
+                dataType: 'json',
+                
+                success: function(response) {
+                    if(response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: response.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        $('#modalNoticia').modal('hide');
+                        tablaNoticias.ajax.reload(null, false);
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error:", status, error, xhr.responseText);
+                    Swal.fire('Error', 'Ocurrió un error al guardar la noticia.', 'error');
+                },
+                complete: function() {
+                    setButtonLoading(false);
+                }
+            });
+        }
+
+        // Eliminar noticia
+        function eliminarNoticia(id) {
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: "Esta acción eliminará la noticia de forma permanente.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/news/${id}`,
+                        type: 'DELETE',
+                        contentType: 'application/json',
+                        success: function(response) {
+                            if(response.success) {
+                                Swal.fire('Eliminado', response.message, 'success');
+                                tablaNoticias.ajax.reload(null, false);
+                            } else {
+                                Swal.fire('Error', response.message, 'error');
+                            }
+                        },
+                        error: function() {
+                            Swal.fire('Error', 'Error al eliminar la noticia', 'error');
+                        }
+                    });
+                }
+            });
+        }
+
+        // Configurar event handlers
+        function setupEventHandlers() {
+            // Vista Previa de Imagen
+            $('#imagen_destacada').off('change').on('change', function() {
+                const [file] = this.files;
+                if (file) {
+                    $imgActual.attr('src', URL.createObjectURL(file));
+                    $('#vista_previa_imagen').show();
+                } else {
+                    if (!$('#noticia_id').val() || !$imgActual.attr('src')) {
+                        $('#vista_previa_imagen').hide();
+                    }
+                }
+            });
+
+            // Formulario de guardado
+            $('#formNoticia').off('submit').on('submit', function(e) {
+                e.preventDefault();
+                guardarNoticia();
+            });
+        }
+        
+        // Función de inicialización principal
+        function init() {
+            if (isInitialized) {
+                console.log('Módulo de noticias ya está inicializado, omitiendo...');
+                return;
+            }
+            
+            console.log('Inicializando módulo de noticias con librerías locales...');
+            
+            // Verificar que DataTables esté disponible
+            if (!$ || !$.fn || !$.fn.DataTable) {
+                console.error('DataTables no está disponible');
+                setTimeout(init, 500);
+                return;
+            }
+            
+            // Inicializar elementos jQuery
+            $btnGuardar = $('#btnGuardarNoticia');
+            $spinner = $('#loadingSpinner');
+            $saveIcon = $('#saveIcon');
+            $imgActual = $('#img_actual');
+            
+            console.log('Elementos jQuery inicializados');
+            
+            // Destruir DataTable existente de forma muy segura
+            try {
+                const $table = $('#tablaNoticias');
+                if ($table.length) {
+                    // Verificar si ya es un DataTable usando la API
+                    if ($.fn.DataTable.isDataTable('#tablaNoticias')) {
+                        $table.DataTable().destroy();
+                        console.log('DataTable anterior destruido');
+                    }
+                    // Limpiar clases CSS residuales
+                    $table.removeClass('dataTable')
+                           .removeClass('table-striped')
+                           .removeClass('table-bordered')
+                           .find('thead, tbody').off();
+                    
+                    // Limpiar el tbody por completo
+                    $table.find('tbody').empty();
+                }
+            } catch (e) {
+                console.warn('Error al destruir DataTable anterior:', e.message);
+                // Si hay error, limpiar manualmente
+                $('#tablaNoticias').empty().html(`
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Descripción</th>
+                            <th>Fecha Publicación</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                `);
+            }
+            
+            inicializarDataTableNoticias();
+            setButtonLoading(false);
+            setupEventHandlers();
+            
+            isInitialized = true;
+            console.log('Módulo de noticias inicializado correctamente');
+        }
+        
+        // API pública del módulo
+        return {
+            init: init,
+            nuevaNoticia: nuevaNoticia,
+            editarNoticia: editarNoticia,
+            eliminarNoticia: eliminarNoticia
+        };
+    })();
+
+    // Inicializar cuando el DOM esté listo - ahora con librerías locales
+    $(document).ready(function() {
+        console.log('DOM listo, inicializando módulo de noticias...');
+        // Con librerías locales, DataTables debería estar disponible inmediatamente
+        setTimeout(function() {
+            window.NoticiasModule.init();
+        }, 300); // Pequeño delay para asegurar que todo esté cargado
+    });
+    
+    // Exponer funciones globalmente para compatibilidad
+    function nuevaNoticia() { window.NoticiasModule.nuevaNoticia(); }
+    function editarNoticia(id) { window.NoticiasModule.editarNoticia(id); }
+    function eliminarNoticia(id) { window.NoticiasModule.eliminarNoticia(id); }
 </script>
 
 <style>

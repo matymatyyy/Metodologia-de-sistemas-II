@@ -11,11 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-require_once dirname(__DIR__).'/html/vendor/autoload.php';
+require_once __DIR__.'/vendor/autoload.php';
 
-require_once dirname(__DIR__).'/html/app/Router/Routes.php';
+require_once __DIR__.'/app/Router/Routes.php';
 
-require_once dirname(__DIR__).'/html/app/Autoloader/Autoloader.php';
+require_once __DIR__.'/app/Autoloader/Autoloader.php';
 
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -28,6 +28,7 @@ spl_autoload_register(
             "src/Service",
             "src/Infrastructure",
             "src/Middleware",
+            "src/Controller",
             "src/Model",
             "src/Entity",
             "src/Utils"

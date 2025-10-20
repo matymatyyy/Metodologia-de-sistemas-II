@@ -12,8 +12,11 @@ final readonly class Router {
 
     public function resolve(string $url, string $method): void
     {
+        // Limpiar query strings de la URL usando strtok
+        $cleanUrl = strtok($url, '?');
+        
         //Buscamos si la ruta me coincide
-        $route = $this->filterRoutes($url, $method);
+        $route = $this->filterRoutes($cleanUrl, $method);
         
         if (empty($route)) {
             throw new Exception("Ruta no encontrada");
@@ -21,7 +24,7 @@ final readonly class Router {
 
         require_once $_SERVER["DOCUMENT_ROOT"]."/src/Controller/".$route->controller();
         
-        $parameters = $this->getParameters($route, $url);
+        $parameters = $this->getParameters($route, $cleanUrl);
 
         $controller = new ($route->className())();
         $controller->start(...$parameters);
