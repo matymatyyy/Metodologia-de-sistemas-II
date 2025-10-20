@@ -9,11 +9,9 @@ use Src\Entity\News\News;
 use Src\Entity\News\Exception\NewsNotFoundException;
 
 final readonly class NewsFinderService {
-    
     private NewsModel $model;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->model = new NewsModel();
     }
 

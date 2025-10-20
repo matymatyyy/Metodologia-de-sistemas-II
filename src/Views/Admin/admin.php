@@ -25,7 +25,7 @@
     <header id="header" class="header fixed-top d-flex align-items-center">
         <div class="d-flex align-items-center justify-content-between">
             <i class="bi bi-list toggle-sidebar-btn"></i>
-            <a href="admin.php">
+            <a href="/admin">
                 <img src="src/Dist/Image/logoUTN.png" alt="Logo" style="height:90px; width:auto;">
             </a>
         </div>

@@ -6,11 +6,9 @@ use Src\Model\News\NewsModel;
 use Src\Entity\News\News;
 
 final readonly class NewsSearcherService {
-
     private NewsModel $model;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->model = new NewsModel();
     }
 
