@@ -72,7 +72,7 @@ final readonly class NewsModel extends DatabaseModel {
             "titulo" => $news->title(),
             "descripcion" => $news->description(),
             "texto" => $news->text(),
-            "fecha" => $news->date()?->format("Y-m-d H:i:s"),
+            "fecha" => $news->publicationDate()?->format("Y-m-d"),
             "imagen" => $news->image()
         ];
         
@@ -98,7 +98,7 @@ final readonly class NewsModel extends DatabaseModel {
             'titulo' => $news->title(),
             'descripcion' => $news->description(),
             'texto' => $news->text(),
-            'fecha' => $news->date()?->format("Y-m-d"),
+            'fecha' => $news->publicationDate()?->format("Y-m-d"),
             'imagen' => $news->image(),
             'id' => $news->id()
         ];
