@@ -24,7 +24,7 @@
                                         <th>Descripción</th>
                                         <th>Texto</th>
                                         <th>Fecha Publicación</th>
-                                        <th>Estado</th>
+                                        <th>Imagen</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -174,17 +174,17 @@
                         { data: 'id' },
                         { data: 'titulo', render: (data) => `<strong>${data}</strong>` },
                         { 
-                            data: 'contenido', 
+                            data: 'descripcion', 
                             render: (data) => data.length > 50 ? data.substring(0, 50) + '...' : data
                         },
                         { 
                             data: 'texto', 
                             render: (data) => data.length > 60 ? data.substring(0, 60) + '...' : data
                         },
-                        { data: 'fecha_publicacion' },
+                        { data: 'fecha' },
                         {
-                            data: null,
-                            render: () => '<span class="badge bg-success">Publicado</span>'
+                            data: 'imagen',
+                            render: (data) => data ? `<img src="${data}" alt="Imagen" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">` : '<span class="text-muted">Sin imagen</span>'
                         },
                         {
                             data: null,
@@ -417,7 +417,7 @@
                             <th>Título</th>
                             <th>Descripción</th>
                             <th>Fecha Publicación</th>
-                            <th>Estado</th>
+                            <th>Imagen</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>

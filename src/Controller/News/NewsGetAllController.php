@@ -25,11 +25,10 @@ final readonly class NewsGetAllController extends AuthMiddleware {
         return fn (News $news): array => [
             'id' => $news->id(),
             'titulo' => $news->title(),
-            'contenido' => $news->description(),
+            'descripcion' => $news->description(),
             'texto' => $news->text(),
-            'fecha_publicacion' => $news->publicationDate()->format("Y-m-d"),
-            'publicado' => 1, // Por defecto publicado, ya que no hay campo en BD
-            'imagen_url' => $news->image() ? $news->image() : null
+            'fecha' => $news->publicationDate()->format("Y-m-d"),
+            'imagen' => $news->image() ? $news->image() : null
         ];
     }
 }
