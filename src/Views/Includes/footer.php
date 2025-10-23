@@ -35,7 +35,7 @@
                     <li><a href="#courses">Carreras</a></li>
                     <li><a href="https://www.frsn.utn.edu.ar/?page_id=689">Inscripciones</a></li>
                     <li><a href="https://www.frsn.utn.edu.ar">Facultad Regional</a></li>
-                    <li><a href="#contact">Contacto</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
                 </ul>
             </div>
 
