@@ -237,34 +237,44 @@
 
         // Editar noticia
         function editarNoticia(id) {
-            nuevaNoticia(); 
-            $('#modalNoticiaLabel').text('Cargando Noticia...'); 
+    $('#modalNoticiaLabel').text('Cargando Noticia...'); 
             
-            $.ajax({
-                url: `/news?id=${id}`,
-                type: 'GET',
-                dataType: 'json',
-                success: function(response) {
-                    if(response.success) {
-                        const data = response.data;
-                        $('#noticia_id').val(data.id);
-                        $('#titulo').val(data.titulo);
-                        $('#contenido').val(data.contenido);
-                        $('#texto').val(data.texto);
-                        $('#fecha_publicacion').val(data.fecha_publicacion);
-                        $('#modalNoticiaLabel').text('Editar Noticia');
+    $.ajax({
+        url: `/news/${id}`, // Usar ruta absoluta con id en el path
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if(response.success) {
+                const data = response.data;
+                
+                // Rellenar campos del formulario
+                $('#noticia_id').val(data.id);
+                $('#titulo').val(data.titulo);
+                $('#contenido').val(data.descripcion || data.contenido); // acepta ambos nombres
+                $('#texto').val(data.texto);
+                $('#fecha_publicacion').val(data.fecha_publicacion || data.fecha);
+                $('#modalNoticiaLabel').text('Editar Noticia');
 
-                        if (data.imagen_url) {
-                            $imgActual.attr('src', data.imagen_url); 
-                            $('#vista_previa_imagen').show();
-                        }
-                        $('#modalNoticia').modal('show');
-                    } else {
-                        Swal.fire('Error', 'No se pudo cargar la noticia', 'error');
-                    }
+                // Manejar la imagen si existe
+                if (data.imagen_url || data.imagen) {
+                    $imgActual.attr('src', data.imagen_url || data.imagen);
+                    $('#vista_previa_imagen').show();
+                } else {
+                    $('#vista_previa_imagen').hide();
                 }
-            });
+
+                $('#modalNoticia').modal('show');
+            } else {
+                Swal.fire('Error', 'No se pudo cargar la noticia', 'error');
+                console.error('Error cargando noticia:', response);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error cargando noticia:", status, error, xhr.responseText);
+            Swal.fire('Error', 'No se pudo cargar la noticia', 'error');
         }
+    });
+}
 
         // Guardar noticia
         function guardarNoticia() {
