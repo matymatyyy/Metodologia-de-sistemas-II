@@ -1,5 +1,16 @@
 <?php
 
+// Validacion para externos
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, x-api-key");
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
 require_once dirname(__DIR__).'/html/vendor/autoload.php';
 
 require_once dirname(__DIR__).'/html/app/Router/Routes.php';
@@ -16,6 +27,7 @@ spl_autoload_register(
         Autoloader::register($class, [
             "src/Service",
             "src/Infrastructure",
+            "src/Middleware",
             "src/Model",
             "src/Entity",
             "src/Utils"

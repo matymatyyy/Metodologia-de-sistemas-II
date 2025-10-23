@@ -11,7 +11,7 @@ final class News {
         private string $title,
         private string $description,
         private string $text,
-        private ?DateTime $date,
+        private ?DateTime $publicationDate,
         private string $image
     ) {}
 
@@ -19,7 +19,7 @@ final class News {
         string $title,
         string $description,
         string $text,
-        ?DateTime $date,
+        ?DateTime $publicationDate,
         string $image
     ): self {
         return new self(
@@ -27,7 +27,7 @@ final class News {
             $title,
             $description,
             $text,
-            $date,
+            $publicationDate,
             $image
         );
     }
@@ -36,13 +36,13 @@ final class News {
         string $title,
         string $description,
         string $text,
-        ?DateTime $date,
+        ?DateTime $publicationDate,
         string $image
     ): void {
         $this->title = $title;
         $this->description = $description;
         $this->text = $text;
-        $this->date = $date;
+        $this->publicationDate = $publicationDate;
         $this->image = $image;
     }
 
@@ -66,9 +66,9 @@ final class News {
         return $this->text;
     }
 
-    public function date(): ?DateTime
+    public function publicationDate(): ?DateTime
     {
-        return $this->date;
+        return $this->publicationDate;
     }
 
     public function image(): ?string
