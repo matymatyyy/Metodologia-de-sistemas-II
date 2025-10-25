@@ -20,7 +20,7 @@
 
         <div class="d-flex align-items-center justify-content-between">
             <i class="bi bi-list toggle-sidebar-btn"></i>
-            <a href="/admin">
+            <a href="admin.php">
                 <img src="src/Dist/Image/logoUTN.png" alt="Logo" style="height:90px; width:auto;">
             </a>
         </div>
@@ -70,7 +70,7 @@
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link" href="/admin">
+                <a class="nav-link" href="index.html">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </a>
@@ -116,7 +116,7 @@
     <!-- ======= Main Content ======= -->
     <main id="main" class="main">
         <div class="pagetitle">
-            <h1>Bienvenido al panel, <?php echo $_SESSION['usuario']; ?></h1>
+            <?php include "carreras.php" ?>
         </div>
     </main>
 

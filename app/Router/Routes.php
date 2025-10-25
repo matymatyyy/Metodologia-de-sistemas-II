@@ -12,7 +12,8 @@ function startRouter(): Router
     include_once "Routes/AdminRoutes.php";
     include_once "Routes/NewsRoutes.php";
     include_once "Routes/ContactoRoutes.php";
-    $routes = array_merge($routes, UsuarioRoutes::getRoutes(), HomeRoutes::getRoutes(), AdminRoutes::getRoutes(), NewsRoutes::getRoutes(), ContactoRoutes::getRoutes());
+    include_once "Routes/CarreraRoutes.php";
+    $routes = array_merge($routes, UsuarioRoutes::getRoutes(), HomeRoutes::getRoutes(), AdminRoutes::getRoutes(), NewsRoutes::getRoutes(), ContactoRoutes::getRoutes(), CarreraRoutes::getRoutes());
 
     $routesClass = [];
     foreach ($routes as $route) {

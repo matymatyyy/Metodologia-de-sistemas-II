@@ -90,7 +90,13 @@
     </div>
 </div>
 
-<!-- Script para Carreras con DataTables -->
+<!-- falta hacer que sean locales las dependencias, los recursos estand descargados en el proyecto. -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script> 
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     let tablaCarreras;
 
@@ -102,17 +108,22 @@
     function inicializarDataTable() {
         tablaCarreras = $('#tablaCarreras').DataTable({
             ajax: {
-                url: 'api/carreras.php',
+                url: 'http://localhost:8080/carreras', //falta hacer dinamico y carreras(crud) no anda al momento 25/10
                 type: 'GET',
                 dataSrc: function(json) {
                     if(json.success) {
                         return json.data;
                     }
+                    console.error('Error en respuesta:', json);
                     return [];
                 },
                 error: function(xhr, error, thrown) {
                     console.error('Error al cargar datos:', error);
-                    Swal.fire('Error', 'No se pudieron cargar las carreras', 'error');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudieron cargar las carreras'
+                    });
                 }
             },
             columns: [
@@ -188,7 +199,7 @@
     // Editar carrera
     function editarCarrera(id) {
         $.ajax({
-            url: `api/carreras.php?id=${id}`,
+            url: 'http://localhost:8080/carreras?id=' + id,
             type: 'GET',
             dataType: 'json',
             success: function(response) {
@@ -203,8 +214,20 @@
                     
                     $('#modalCarrera').modal('show');
                 } else {
-                    Swal.fire('Error', 'No se pudo cargar la carrera', 'error');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo cargar la carrera'
+                    });
                 }
+            },
+            error: function(xhr, error, thrown) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al cargar los datos de la carrera'
+                });
             }
         });
     }
@@ -212,7 +235,7 @@
     // Ver detalle de carrera
     function verDetalleCarrera(id) {
         $.ajax({
-            url: `api/carreras.php?id=${id}`,
+            url: 'http://localhost:8080/carreras?id=' + id,
             type: 'GET',
             dataType: 'json',
             success: function(response) {
@@ -243,6 +266,14 @@
                         width: '500px'
                     });
                 }
+            },
+            error: function(xhr, error, thrown) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al cargar el detalle de la carrera'
+                });
             }
         });
     }
@@ -261,20 +292,35 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: 'api/carreras.php',
+                    url: 'http://localhost:8080/carreras',
                     type: 'DELETE',
                     data: JSON.stringify({ id: id }),
                     contentType: 'application/json',
                     success: function(response) {
                         if(response.success) {
-                            Swal.fire('Eliminado', response.message, 'success');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Eliminado',
+                                text: response.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
                             tablaCarreras.ajax.reload(null, false); // Recargar sin reset de paginación
                         } else {
-                            Swal.fire('Error', response.message, 'error');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message
+                            });
                         }
                     },
-                    error: function() {
-                        Swal.fire('Error', 'Error al eliminar la carrera', 'error');
+                    error: function(xhr, error, thrown) {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error al eliminar la carrera'
+                        });
                     }
                 });
             }
@@ -297,7 +343,7 @@
         const method = id ? 'PUT' : 'POST';
         
         $.ajax({
-            url: 'api/carreras.php',
+            url: 'http://localhost:8080/carreras',
             type: method,
             data: JSON.stringify(formData),
             contentType: 'application/json',
@@ -314,11 +360,20 @@
                     $('#modalCarrera').modal('hide');
                     tablaCarreras.ajax.reload(null, false); // Recargar DataTable sin reset
                 } else {
-                    Swal.fire('Error', response.message, 'error');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message
+                    });
                 }
             },
-            error: function() {
-                Swal.fire('Error', 'Ocurrió un error al guardar la carrera', 'error');
+            error: function(xhr, error, thrown) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al guardar la carrera'
+                });
             }
         });
     });
@@ -338,5 +393,18 @@
     
     .card-title {
         margin-bottom: 0;
+    }
+    
+    /* Estilos adicionales para DataTables */
+    .dataTables_wrapper .dataTables_filter input {
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        padding: 0.375rem 0.75rem;
+    }
+    
+    .dataTables_wrapper .dataTables_length select {
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        padding: 0.375rem 2.25rem 0.375rem 0.75rem;
     }
 </style>
