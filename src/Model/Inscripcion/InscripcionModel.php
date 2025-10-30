@@ -132,7 +132,7 @@ final readonly class InscripcionModel extends DatabaseModel {
 
         return new Inscripcion(
             $primitive['id'],
-            $primitive['idCarrera'],
+            $primitive['id_carrera'],
             $primitive['nombre'],
             $primitive['apellido'],
             $primitive['email'],
