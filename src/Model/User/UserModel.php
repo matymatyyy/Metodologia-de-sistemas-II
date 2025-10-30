@@ -11,30 +11,20 @@ final readonly class UserModel extends DatabaseModel {
     public function findByEmailAndPassword(string $email, string $password): ?User
     {
         $query = <<<SELECT_QUERY
-                    SELECT
-                        U.*
-                    FROM
-                        usuarios U
-                    WHERE
-                        U.email = :email
+                    SELECT U.* FROM usuarios U WHERE U.email = :email
                 SELECT_QUERY;
-
-        $parameters = [
-            'email' => $email,
-        ];
-
-        $result = $this->primitiveQuery($query, $parameters);
         
+        $result = $this->primitiveQuery($query, ['email' => $email]);
         $user = $this->toUser($result[0] ?? null); 
-
+        
         if ($user === null) {
             return null;
         }
-
-        if (password_verify($password, $user->password())) {
+        
+        if (hash('sha256', $password) === $user->password()) {
             return $user;
         }
-
+        
         return null;
     }
 

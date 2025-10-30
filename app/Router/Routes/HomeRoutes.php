@@ -5,7 +5,7 @@ final readonly class HomeRoutes {
     return [
       [
         "name" => "home_view",
-        "url" => "/home",
+        "url" => "/",
         "controller" => "Home/HomeViewController.php",
         "method" => "GET"
       ],
