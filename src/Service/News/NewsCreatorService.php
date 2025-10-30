@@ -9,18 +9,16 @@ use Src\Entity\News\News;
 use Src\Model\News\NewsModel;
 
 final readonly class NewsCreatorService {
-
     private NewsModel $model;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->model = new NewsModel();
     }
 
-    public function create(string $title, string $description, string $text, ?DateTime $date, ?string $image): void
+    public function create(string $title, string $description, string $text, ?DateTime $publicationDate, ?string $image): void
     {
-        $news = News::create($title, $description, $text, $date, $image);
-        
+        $news = News::create($title, $description, $text, $publicationDate, $image);
+
         $this->model->insert($news);
     }
 }
