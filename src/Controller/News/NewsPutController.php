@@ -13,6 +13,7 @@ final readonly class NewsPutController extends AuthMiddleware {
 
     public function start(int $id): void
     {
+        
         $title = ControllerUtils::getPost("title");
         $description = ControllerUtils::getPost("description");
         $text = ControllerUtils::getPost("text");
