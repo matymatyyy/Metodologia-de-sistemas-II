@@ -1,6 +1,4 @@
 <?php
-    // Asegúrate de que session_start() se ejecute al inicio si lo necesitas
-    // session_start(); 
     $_SESSION['usuario'] = "Admin";
     $_SESSION['rol'] = "Secretario";
 ?>
@@ -72,32 +70,32 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" onclick="cargarContenido('/src/Views/Admin/carreras.php')"> 
+                <a class="nav-link collapsed" href="/admin/carreras">
                     <i class="bi bi-mortarboard"></i>
                     <span>Carreras</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#">
+                <a class="nav-link collapsed" href="/admin/inscripciones">
                     <i class="bi bi-file-earmark-text"></i>
                     <span>Inscripciones</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" onclick="cargarContenido('/src/Views/Admin/carreras_plan.php')">
+                <a class="nav-link collapsed" href="/admin/carreras-plan">
                     <i class="bi bi-journal-bookmark"></i>
                     <span>Carreras Plan</span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" onclick="cargarContenido('/src/Views/Admin/noticias.php')"> 
+                <a class="nav-link collapsed" href="/admin/noticias">
                     <i class="bi bi-newspaper"></i>
                     <span>Noticias</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#">
+                <a class="nav-link collapsed" href="/admin/usuarios">
                     <i class="bi bi-people"></i>
                     <span>Usuarios</span>
                 </a>
@@ -123,13 +121,9 @@
     <script src="src/Dist/Admin/admin.js"></script>
 
     <script>
-        
-        // Función CRUCIAL para cargar contenido en el div dinámico
         function cargarContenido(url) {
-            // Oculta el título de bienvenida predeterminado
             $('#tituloDefault').hide();
             
-            // 1. Muestra un loader (Feedback al usuario)
             $('#contenidoDinamico').html(`
                 <div class="text-center p-5">
                     <span class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></span>
@@ -137,18 +131,14 @@
                 </div>
             `);
             
-            // 2. Petición AJAX
             $.ajax({
                 url: url,
                 type: 'GET',
                 success: function(data) {
-                    // Carga el contenido HTML recibido
                     $('#contenidoDinamico').html(data);
                     
-                    // Vuelve a mostrar el título (ahora el título del módulo)
                     $('#tituloDefault').show();
 
-                    // 3. Ejecuta los scripts que vienen incluidos en el archivo (¡CRUCIAL para DataTables!)
                     ejecutarScriptsCargados();
                 },
                 error: function(xhr) {
@@ -162,41 +152,33 @@
             });
         }
         
-        // Función para re-ejecutar los scripts dentro del contenido cargado
         function ejecutarScriptsCargados() {
-            // Busca todos los bloques <script> dentro del contenido dinámico
             const scripts = $('#contenidoDinamico').find('script');
             scripts.each(function() {
                 try {
                     if ($(this).attr('src')) {
-                        // Scripts externos - no los volvemos a cargar
                         console.log('Script externo ignorado:', $(this).attr('src'));
                     } else {
-                        // Ejecutar código JavaScript directamente
                         const scriptContent = $(this).text();
                         if (scriptContent.trim()) {
-                            // Añadir un pequeño delay para asegurar que todas las librerías estén cargadas
                             setTimeout(function() {
                                 try {
-                                    // Usar Function constructor en lugar de eval para mejor contexto
                                     new Function(scriptContent)();
                                 } catch (execError) {
                                     console.error('Error ejecutando script retrasado:', execError);
                                 }
-                            }, 100); // 100ms de delay
+                            }, 100);
                         }
                     }
                 } catch (error) {
                     console.error('Error ejecutando script:', error);
                 }
-                // Elimina el script original
                 $(this).remove(); 
             });
         }
         
-        // CORRECCIÓN CLAVE: Al iniciar, solo mostramos el mensaje de bienvenida.
         $(document).ready(function() {
-             $('#contenidoDinamico').html('<div class="alert alert-info mt-4"><h4 class="mb-3">Bienvenido, <?php echo $_SESSION['usuario']; ?>.</h4><p>Seleccione una opción del menú lateral para comenzar a administrar el sistema.</p></div>');
+            $('#contenidoDinamico').html('<div class="alert alert-info mt-4"><h4 class="mb-3">Bienvenido, <?php echo $_SESSION['usuario']; ?>.</h4><p>Seleccione una opción del menú lateral para comenzar a administrar el sistema.</p></div>');
         });
     </script>
 </body>
