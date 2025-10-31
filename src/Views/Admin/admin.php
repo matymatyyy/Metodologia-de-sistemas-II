@@ -77,7 +77,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="/admin/carreras">
+                <a data-url="Admin/carreras" class="nav-link collapsed" data-location="#main">
                     <i class="bi bi-mortarboard"></i>
                     <span>Carreras</span>
                 </a>
@@ -120,8 +120,10 @@
         </div>
     </main>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="src/Dist/Admin/admin.js"></script>
+    <script src="src/Dist/app/app.js"></script>
 </body>
 
 </html>
