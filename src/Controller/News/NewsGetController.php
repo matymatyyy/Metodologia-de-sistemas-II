@@ -21,7 +21,6 @@ final readonly class NewsGetController {
                 "contenido" => $news->description(),
                 "texto" => $news->text(),
                 "fecha_publicacion" => $news->publicationDate()->format("Y-m-d"),
-                "publicado" => 1, // Por defecto publicado
                 "imagen_url" => $news->image()
             ]
         ]);

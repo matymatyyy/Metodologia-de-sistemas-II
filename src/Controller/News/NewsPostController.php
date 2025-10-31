@@ -17,7 +17,7 @@ final readonly class NewsPostController {
         $description = ControllerUtils::getPost("description");
         $text = ControllerUtils::getPost("text");
         $publicationDate = new \DateTime(ControllerUtils::getPost("publicationDate"));
-        $image = ControllerUtils::getPost("image");
+        $image = ControllerUtils::getFile("imagen", false);
 
         $this->service->create($title, $description, $text, $publicationDate, $image);
     }

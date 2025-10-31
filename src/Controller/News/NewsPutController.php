@@ -17,7 +17,7 @@ final readonly class NewsPutController extends AuthMiddleware {
         $description = ControllerUtils::getPost("description");
         $text = ControllerUtils::getPost("text");
         $publicationDate = new \DateTime(ControllerUtils::getPost("publicationDate"));
-        $image = ControllerUtils::getPost("image");
+        $image = ControllerUtils::getFile("imagen", false);
 
         $this->service->update($title, $description, $text, $publicationDate, $image, $id);
     }

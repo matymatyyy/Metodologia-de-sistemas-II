@@ -52,29 +52,28 @@
                     
                     <div class="mb-3">
                         <label for="titulo" class="form-label">Título de la Noticia <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ej: Avance tecnológico en IA" required>
+                        <input type="text" class="form-control" id="titulo" name="title" placeholder="Ej: Avance tecnológico en IA" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="contenido" class="form-label">Descripción de la Noticia <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="contenido" name="contenido" rows="3" placeholder="Descripción breve de la noticia" required></textarea>
-                        <small class="text-muted">Descripción corta que aparece en listados</small>
+                        <label for="descripcion" class="form-label">Descripción de la Noticia <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="descripcion" name="description" rows="3" placeholder="Descripción breve de la noticia" required></textarea>
                     </div>
 
                     <div class="mb-3">
                         <label for="texto" class="form-label">Texto Completo de la Noticia <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="texto" name="texto" rows="8" placeholder="Contenido completo de la noticia" required></textarea>
+                        <textarea class="form-control" id="texto" name="text" rows="8" placeholder="Contenido completo de la noticia" required></textarea>
                         <small class="text-muted">Texto completo del artículo</small>
                     </div>
 
                     <div class="mb-3">
-                        <label for="fecha_publicacion" class="form-label">Fecha de Publicación <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control" id="fecha_publicacion" name="fecha_publicacion" required>
+                        <label for="fecha" class="form-label">Fecha de Publicación <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="fecha" name="publicationDate" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="imagen_destacada" class="form-label">Imagen Destacada (PNG, JPG)</label>
-                        <input class="form-control" type="file" id="imagen_destacada" name="imagen_destacada" accept=".png, .jpg, .jpeg">
+                        <label for="imagen" class="form-label">Imagen Destacada (PNG, JPG)</label>
+                        <input class="form-control" type="file" id="imagen" name="imagen" accept=".png, .jpg, .jpeg">
                         <small class="text-muted">Sube una imagen para la noticia. Deja vacío para mantener la actual.</small>
                         
                         <div id="vista_previa_imagen" class="mt-2" style="max-width: 150px; display: none;">
@@ -227,7 +226,7 @@
             $('#modalNoticiaLabel').text('Nueva Noticia');
             
             const today = new Date().toISOString().split('T')[0];
-            $('#fecha_publicacion').val(today);
+            $('#fecha').val(today);
             
             $('#vista_previa_imagen').hide(); 
             $imgActual.attr('src', '');
@@ -241,7 +240,7 @@
             $('#modalNoticiaLabel').text('Cargando Noticia...'); 
             
             $.ajax({
-                url: `/news?id=${id}`,
+                url: `/news/${id}`,
                 type: 'GET',
                 dataType: 'json',
                 success: function(response) {
@@ -249,9 +248,9 @@
                         const data = response.data;
                         $('#noticia_id').val(data.id);
                         $('#titulo').val(data.titulo);
-                        $('#contenido').val(data.contenido);
+                        $('#descripcion').val(data.contenido);
                         $('#texto').val(data.texto);
-                        $('#fecha_publicacion').val(data.fecha_publicacion);
+                        $('#fecha').val(data.fecha_publicacion);
                         $('#modalNoticiaLabel').text('Editar Noticia');
 
                         if (data.imagen_url) {
