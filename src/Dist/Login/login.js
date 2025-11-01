@@ -189,7 +189,7 @@ function createRipple(event) {
 }
 
 // Función para enviar el formulario
-function handleFormSubmit(e) {
+async function handleFormSubmit (e) {
     e.preventDefault(); // Prevenir envío normal para usar AJAX
     
     if (isLoading) {
@@ -206,6 +206,8 @@ function handleFormSubmit(e) {
         return;
     }
     
+    var passwordHash = await hashPassword(password);
+
     // Mostrar estado de carga
     isLoading = true;
     const btn = document.getElementById('loginBtn');
@@ -216,17 +218,17 @@ function handleFormSubmit(e) {
     if (existingError) {
         existingError.remove();
     }
+    console.log(password);
     
     // Enviar por AJAX
-    fetch('/usuario', {
+    fetch('http://localhost:8080/usuario', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Requested-With': 'XMLHttpRequest'
+            'Content-Type': 'application/json',
         },
-        body: new URLSearchParams({
+        body: JSON.stringify({
             email: email,
-            password: password
+            password: passwordHash
         })
     })
     .then(response => {
@@ -236,12 +238,15 @@ function handleFormSubmit(e) {
         return response.json().then(data => Promise.reject(data));
     })
     .then(data => {
+
         if (data.success) {
             // Login exitoso - mostrar página de éxito y redirigir
-            showSuccessAndRedirect(data.user);
+            showSuccessAndRedirect(data.user.name);
         }
     })
     .catch(error => {
+        console.log(error);
+        
         // Mostrar error en la misma página
         const errorMessage = error.error || 'Error de conexión';
         showLoginError(errorMessage);
@@ -251,6 +256,7 @@ function handleFormSubmit(e) {
         btn.classList.remove('loading');
     });
 }
+
 
 // Función para mostrar éxito y redirigir
 function showSuccessAndRedirect(userName) {
