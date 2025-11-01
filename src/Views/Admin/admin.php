@@ -77,35 +77,35 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#">
+                <a class="nav-link collapsed" href="/admin/carreras">
                     <i class="bi bi-mortarboard"></i>
                     <span>Carreras</span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#">
+                <a class="nav-link collapsed" href="/admin/inscripciones">
                     <i class="bi bi-file-earmark-text"></i>
                     <span>Inscripciones</span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#">
+                <a class="nav-link collapsed" href="/admin/carreras-plan">
                     <i class="bi bi-journal-bookmark"></i>
                     <span>Carreras Plan</span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#">
+                <a class="nav-link collapsed" href="/admin/noticias">
                     <i class="bi bi-newspaper"></i>
                     <span>Noticias</span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#">
+                <a class="nav-link collapsed" href="/admin/usuarios">
                     <i class="bi bi-people"></i>
                     <span>Usuarios</span>
                 </a>
