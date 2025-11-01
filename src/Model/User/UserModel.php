@@ -39,16 +39,15 @@ final readonly class UserModel extends DatabaseModel {
                     FROM
                         usuarios U
                     WHERE
-                        U.token = :token AND :date <= U.token_auth_date
+                        U.token = :token AND U.token_auth_date >= NOW()
                 SELECT_QUERY;
 
         $parameters = [
-            'token' => $token,
-            'date' => date("Y-m-d H:i:s")
+            'token' => $token
         ];
 
         $result = $this->primitiveQuery($query, $parameters);
-        
+
         return $this->toUser($result[0] ?? null);
     }
 
