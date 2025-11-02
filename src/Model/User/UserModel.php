@@ -56,7 +56,7 @@ final readonly class UserModel extends DatabaseModel {
                         U.id,
                         U.nombre,
                         U.email,
-                        U.contraseña,
+                        U.password,
                         U.token,
                         U.token_auth_date
                     FROM
@@ -82,7 +82,7 @@ final readonly class UserModel extends DatabaseModel {
                         C.id,
                         C.nombre,
                         C.email,
-                        C.contraseña,
+                        C.password,
                         C.token,
                         C.token_auth_date
                     FROM 
@@ -104,15 +104,15 @@ final readonly class UserModel extends DatabaseModel {
     {
         $query = <<<INSERT_QUERY
                 INSERT INTO usuarios
-                (nombre, email, contraseña, token, token_auth_date)
+                (nombre, email, password, token, token_auth_date)
                 VALUES
-                (:nombre, :email, :contraseña, :token, :tokenAuthDate)
+                (:nombre, :email, :password, :token, :tokenAuthDate)
                 INSERT_QUERY;
 
         $parameters = [
             "nombre" => $user->name(),
             "email" => $user->email(),
-            "contraseña" => $user->password(),
+            "password" => $user->password(),
             "token" => $user->token(),
             "tokenAuthDate" => $user->tokenAuthDate()?->format("Y-m-d H:i:s")
         ];
@@ -149,7 +149,7 @@ final readonly class UserModel extends DatabaseModel {
                     SET
                         nombre = :nombre,
                         email = :email,
-                        contraseña = :contraseña
+                        password = :password
                     WHERE
                         id = :id
                 SELECT_QUERY;
@@ -157,7 +157,7 @@ final readonly class UserModel extends DatabaseModel {
         $parameters = [
             'nombre' => $user->name(),
             'email' => $user->email(),
-            'contraseña' => $user->password(),
+            'password' => $user->password(),
             'id' => $user->id()
         ];
 
@@ -190,7 +190,7 @@ final readonly class UserModel extends DatabaseModel {
             $primitive['id'],
             $primitive['nombre'],
             $primitive['email'],
-            $primitive['contraseña'],
+            $primitive['password'],
             $primitive['token'],
             empty($primitive['token_auth_date']) ? null : new DateTime($primitive['token_auth_date']),
         );

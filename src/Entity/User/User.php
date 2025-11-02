@@ -24,7 +24,8 @@ final class User {
             null, 
             $name, 
             $email, 
-            password_hash($password, PASSWORD_BCRYPT), 
+            //password_hash($password, PASSWORD_BCRYPT), 
+            $password,
             null, 
             null);
     }
@@ -36,7 +37,8 @@ final class User {
         ): void {
         $this->name = $name;
         $this->email = $email;
-        $this->password = password_hash($password, PASSWORD_BCRYPT);
+        //$this->password = password_hash($password, PASSWORD_BCRYPT);
+        $this->password = $password;
     } 
 
     public function id(): ?int
