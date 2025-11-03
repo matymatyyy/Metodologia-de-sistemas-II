@@ -89,7 +89,7 @@
             </div>
             
             <!-- FORMULARIO DE LOGIN: Envío POST a tu ruta de usuario login -->
-            <form class="login-form" method="POST" action="/usuario" id="loginForm">
+            <form class="login-form" id="loginForm">
                 
                 <!-- MENSAJE DE ERROR: Se muestra si hay error en el login -->
                 <?php 

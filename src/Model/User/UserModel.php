@@ -21,7 +21,10 @@ final readonly class UserModel extends DatabaseModel {
             return null;
         }
         
-        if (hash('sha256', $password) === $user->password()) {
+        // if (hash('sha256', $password) === $user->password()) {
+        //     return $user;
+        // }
+        if ($password == $user->password()) {
             return $user;
         }
         
