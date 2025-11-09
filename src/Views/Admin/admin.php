@@ -13,6 +13,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="src/Dist/Admin/admin.css" rel="stylesheet">
+    <link href="src/Dist/DataTables/datatables.min.css" rel="stylesheet">
 </head>
 <body>
     <!-- ======= Header ======= -->
@@ -112,6 +113,11 @@
             </li>
         </ul>
     </aside>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="src/Dist/jQuery/jquery.min.js"></script>
+    <script src="src/Dist/DataTables/datatables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- ======= Main Content ======= -->
     <main id="main" class="main">
@@ -120,7 +126,6 @@
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="src/Dist/Admin/admin.js"></script>
 </body>
 
