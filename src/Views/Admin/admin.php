@@ -13,6 +13,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="src/Dist/Admin/admin.css" rel="stylesheet">
+    <link href="src/Dist/DataTables/datatables.min.css" rel="stylesheet">
 </head>
 <body>
     <!-- ======= Header ======= -->
@@ -20,7 +21,7 @@
 
         <div class="d-flex align-items-center justify-content-between">
             <i class="bi bi-list toggle-sidebar-btn"></i>
-            <a href="admin.php">
+            <a href="/admin">
                 <img src="src/Dist/Image/logoUTN.png" alt="Logo" style="height:90px; width:auto;">
             </a>
         </div>
@@ -70,7 +71,7 @@
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="/admin">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </a>
@@ -112,15 +113,19 @@
             </li>
         </ul>
     </aside>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="src/Dist/jQuery/jquery.min.js"></script>
+    <script src="src/Dist/DataTables/datatables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- ======= Main Content ======= -->
     <main id="main" class="main">
         <div class="pagetitle">
-            <?php include "carreras.php" ?>
+            <h1>Bienvenido al panel, <?php echo $_SESSION['usuario']; ?></h1>
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="src/Dist/Admin/admin.js"></script>
 </body>
 

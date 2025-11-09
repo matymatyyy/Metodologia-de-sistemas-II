@@ -23,13 +23,14 @@
                                         <th>ID</th>
                                         <th>Título</th>
                                         <th>Duración</th>
+                                        <th>Fecha Inicio</th>
+                                        <th>Fecha Fin</th>
                                         <th>Cupos</th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- DataTables cargará los datos automáticamente -->
                                 </tbody>
                             </table>
                         </div>
@@ -40,7 +41,6 @@
     </section>
 </main>
 
-<!-- Modal Carrera -->
 <div class="modal fade" id="modalCarrera" tabindex="-1" aria-labelledby="modalCarreraLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -59,9 +59,19 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="duracion" class="form-label">Duración (Fecha de Finalización) <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="duracion" name="duracion" required>
-                            <small class="text-muted">Ingrese la fecha estimada de finalización de la carrera</small>
+                            <label for="fecha_inicio" class="form-label">Fecha de Inicio <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha_fin" class="form-label">Fecha de Finalización <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="duracion" class="form-label">Duración <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="duracion" name="duracion" placeholder="Ej: 8 meses" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="cupos" class="form-label">Cupos Disponibles <span class="text-danger">*</span></label>
@@ -90,40 +100,31 @@
     </div>
 </div>
 
-<!-- falta hacer que sean locales las dependencias, los recursos estand descargados en el proyecto. -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script> 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
     let tablaCarreras;
 
     $(document).ready(function() {
+        console.log('Inicializando DataTable...');
         inicializarDataTable();
     });
 
-    // Inicializar DataTable con AJAX
     function inicializarDataTable() {
         tablaCarreras = $('#tablaCarreras').DataTable({
             ajax: {
-                url: 'http://localhost:8080/carreras', //falta hacer dinamico y carreras(crud) no anda al momento 25/10
+                url: 'http://localhost:8080/carreras',
                 type: 'GET',
+                cache: true,
                 dataSrc: function(json) {
-                    if(json.success) {
+                    console.log('Datos recibidos:', json);
+                    if(json.data) {
                         return json.data;
                     }
-                    console.error('Error en respuesta:', json);
                     return [];
                 },
                 error: function(xhr, error, thrown) {
                     console.error('Error al cargar datos:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'No se pudieron cargar las carreras'
-                    });
+                    console.error('XHR:', xhr);
+                    Swal.fire('Error', 'No se pudieron cargar las carreras: ' + error, 'error');
                 }
             },
             columns: [
@@ -137,10 +138,23 @@
                 { 
                     data: 'duracion',
                     render: function(data, type, row) {
-                        const fechaDuracion = new Date(data);
-                        const hoy = new Date();
-                        const difAnios = Math.ceil((fechaDuracion - hoy) / (1000 * 60 * 60 * 24 * 365));
-                        return difAnios > 0 ? difAnios + ' años' : 'Finalizada';
+                        return data || 'N/A';
+                    }
+                },
+                { 
+                    data: 'fecha_inicio',
+                    render: function(data, type, row) {
+                        if(!data) return 'N/A';
+                        const fecha = new Date(data);
+                        return fecha.toLocaleDateString('es-AR');
+                    }
+                },
+                { 
+                    data: 'fecha_fin',
+                    render: function(data, type, row) {
+                        if(!data) return 'N/A';
+                        const fecha = new Date(data);
+                        return fecha.toLocaleDateString('es-AR');
                     }
                 },
                 { 
@@ -199,35 +213,30 @@
     // Editar carrera
     function editarCarrera(id) {
         $.ajax({
-            url: 'http://localhost:8080/carreras?id=' + id,
+            url: `http://localhost:8080/carreras/${id}`,
             type: 'GET',
             dataType: 'json',
+            cache: true,
             success: function(response) {
-                if(response.success) {
-                    const data = response.data;
-                    $('#carrera_id').val(data.id);
-                    $('#titulo').val(data.titulo);
-                    $('#duracion').val(data.duracion);
-                    $('#cupos').val(data.cupos);
-                    $('#activo').prop('checked', data.activo == 1);
-                    $('#modalCarreraLabel').text('Editar Carrera');
-                    
-                    $('#modalCarrera').modal('show');
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'No se pudo cargar la carrera'
-                    });
-                }
+                console.log('Respuesta editar:', response);
+                
+                // Adaptado para diferentes formatos de respuesta
+                const data = response.data || response;
+                
+                $('#carrera_id').val(data.id);
+                $('#titulo').val(data.titulo);
+                $('#duracion').val(data.duracion);
+                $('#fecha_inicio').val(data.fecha_inicio);
+                $('#fecha_fin').val(data.fecha_fin);
+                $('#cupos').val(data.cupos);
+                $('#activo').prop('checked', data.activo == 1);
+                $('#modalCarreraLabel').text('Editar Carrera');
+                
+                $('#modalCarrera').modal('show');
             },
             error: function(xhr, error, thrown) {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al cargar los datos de la carrera'
-                });
+                console.error('Error al cargar carrera:', error);
+                Swal.fire('Error', 'No se pudo cargar la carrera', 'error');
             }
         });
     }
@@ -235,45 +244,39 @@
     // Ver detalle de carrera
     function verDetalleCarrera(id) {
         $.ajax({
-            url: 'http://localhost:8080/carreras?id=' + id,
+            url: `http://localhost:8080/carreras/${id}`,
             type: 'GET',
             dataType: 'json',
+            cache: true,
             success: function(response) {
-                if(response.success) {
-                    const data = response.data;
-                    const estado = data.activo == 1 ? 'Activo' : 'Inactivo';
-                    
-                    // Calcular duración
-                    const fechaDuracion = new Date(data.duracion);
-                    const hoy = new Date();
-                    const difAnios = Math.ceil((fechaDuracion - hoy) / (1000 * 60 * 60 * 24 * 365));
-                    const duracionTexto = difAnios > 0 ? difAnios + ' años' : 'Finalizada';
-                    
-                    Swal.fire({
-                        title: 'Detalle de Carrera',
-                        html: `
-                            <div class="text-start">
-                                <p><strong>ID:</strong> ${data.id}</p>
-                                <p><strong>Título:</strong> ${data.titulo}</p>
-                                <p><strong>Duración:</strong> ${duracionTexto}</p>
-                                <p><strong>Fecha de Finalización:</strong> ${data.duracion}</p>
-                                <p><strong>Cupos Disponibles:</strong> ${data.cupos}</p>
-                                <p><strong>Estado:</strong> <span class="badge bg-${data.activo == 1 ? 'success' : 'danger'}">${estado}</span></p>
-                            </div>
-                        `,
-                        icon: 'info',
-                        confirmButtonText: 'Cerrar',
-                        width: '500px'
-                    });
-                }
+                const data = response.data || response;
+                const estado = data.activo == 1 ? 'Activo' : 'Inactivo';
+                
+                // Formatear fechas
+                const fechaInicio = data.fecha_inicio ? new Date(data.fecha_inicio).toLocaleDateString('es-AR') : 'N/A';
+                const fechaFin = data.fecha_fin ? new Date(data.fecha_fin).toLocaleDateString('es-AR') : 'N/A';
+                
+                Swal.fire({
+                    title: 'Detalle de Carrera',
+                    html: `
+                        <div class="text-start">
+                            <p><strong>ID:</strong> ${data.id}</p>
+                            <p><strong>Título:</strong> ${data.titulo}</p>
+                            <p><strong>Duración:</strong> ${data.duracion}</p>
+                            <p><strong>Fecha de Inicio:</strong> ${fechaInicio}</p>
+                            <p><strong>Fecha de Finalización:</strong> ${fechaFin}</p>
+                            <p><strong>Cupos Disponibles:</strong> ${data.cupos}</p>
+                            <p><strong>Estado:</strong> <span class="badge bg-${data.activo == 1 ? 'success' : 'danger'}">${estado}</span></p>
+                        </div>
+                    `,
+                    icon: 'info',
+                    confirmButtonText: 'Cerrar',
+                    width: '500px'
+                });
             },
             error: function(xhr, error, thrown) {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al cargar el detalle de la carrera'
-                });
+                console.error('Error al cargar detalle:', error);
+                Swal.fire('Error', 'No se pudo cargar el detalle de la carrera', 'error');
             }
         });
     }
@@ -292,88 +295,81 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: 'http://localhost:8080/carreras',
+                    url: `http://localhost:8080/carreras/${id}`,
                     type: 'DELETE',
-                    data: JSON.stringify({ id: id }),
                     contentType: 'application/json',
                     success: function(response) {
-                        if(response.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Eliminado',
-                                text: response.message,
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                            tablaCarreras.ajax.reload(null, false); // Recargar sin reset de paginación
+                        console.log('Respuesta eliminar:', response);
+                        
+                        if(response.success !== false) {
+                            Swal.fire('Eliminado', response.message || 'Carrera eliminada correctamente', 'success');
+                            tablaCarreras.ajax.reload(null, false);
                         } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: response.message
-                            });
+                            Swal.fire('Error', response.message || 'Error al eliminar', 'error');
                         }
                     },
                     error: function(xhr, error, thrown) {
-                        console.error('Error:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Error al eliminar la carrera'
-                        });
+                        console.error('Error al eliminar:', error);
+                        Swal.fire('Error', 'Error al eliminar la carrera', 'error');
                     }
                 });
             }
         });
     }
 
-    // Guardar carrera (crear o actualizar)
     $('#formCarrera').on('submit', function(e) {
         e.preventDefault();
         
         const id = $('#carrera_id').val();
-        const formData = {
-            id: id,
-            titulo: $('#titulo').val(),
-            duracion: $('#duracion').val(),
-            cupos: $('#cupos').val(),
-            activo: $('#activo').is(':checked') ? 1 : 0
-        };
+        
+        // Crear FormData para ambos POST y PUT
+        const formData = new FormData();
+        formData.append('titulo', $('#titulo').val());
+        formData.append('duracion', $('#duracion').val());
+        formData.append('fecha_inicio', $('#fecha_inicio').val());
+        formData.append('fecha_fin', $('#fecha_fin').val());
+        formData.append('cupos', $('#cupos').val());
+        formData.append('activo', $('#activo').is(':checked') ? 1 : 0);
+
+        // Agregar _method para simular PUT (si tu backend lo soporta)
+        if(id) {
+            formData.append('_method', 'PUT');
+        }
 
         const method = id ? 'PUT' : 'POST';
+        const url = id ? `http://localhost:8080/carreras/${id}` : 'http://localhost:8080/carreras';
+        
+        console.log('Enviando:', method, url);
         
         $.ajax({
-            url: 'http://localhost:8080/carreras',
+            url: url,
             type: method,
-            data: JSON.stringify(formData),
-            contentType: 'application/json',
+            data: formData,
+            processData: false,
+            contentType: false,
             dataType: 'json',
+            cache: true,
             success: function(response) {
-                if(response.success) {
+                console.log('Respuesta guardar:', response);
+                
+                if(response.success !== false) {
                     Swal.fire({
                         icon: 'success',
                         title: 'Éxito',
-                        text: response.message,
+                        text: response.message || 'Carrera guardada correctamente',
                         timer: 2000,
                         showConfirmButton: false
                     });
                     $('#modalCarrera').modal('hide');
-                    tablaCarreras.ajax.reload(null, false); // Recargar DataTable sin reset
+                    tablaCarreras.ajax.reload(null, false);
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: response.message
-                    });
+                    Swal.fire('Error', response.message || 'Error al guardar', 'error');
                 }
             },
             error: function(xhr, error, thrown) {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Ocurrió un error al guardar la carrera'
-                });
+                console.error('Error al guardar:', error);
+                console.error('XHR:', xhr.responseText);
+                Swal.fire('Error', 'Ocurrió un error al guardar la carrera', 'error');
             }
         });
     });
@@ -393,18 +389,5 @@
     
     .card-title {
         margin-bottom: 0;
-    }
-    
-    /* Estilos adicionales para DataTables */
-    .dataTables_wrapper .dataTables_filter input {
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-        padding: 0.375rem 0.75rem;
-    }
-    
-    .dataTables_wrapper .dataTables_length select {
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-        padding: 0.375rem 2.25rem 0.375rem 0.75rem;
     }
 </style>

@@ -50,7 +50,7 @@ final readonly class CarreraRoutes {
             "type" => "int"
           ]
         ]
-      ] ,     
+      ] ,
       [
         "name" => "carrera_view",
         "url" => "/admin/carreras",
