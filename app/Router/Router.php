@@ -12,6 +12,9 @@ final readonly class Router {
 
     public function resolve(string $url, string $method): void
     {
+        // 💡 Cortamos el query string (todo después del '?')
+        $url = parse_url($url, PHP_URL_PATH);
+        
         //Buscamos si la ruta me coincide
         $route = $this->filterRoutes($url, $method);
         
