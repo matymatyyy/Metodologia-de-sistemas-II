@@ -3,15 +3,15 @@
 ?>
 
 <!-- ======= Head ======= -->
-<?php include 'src/Views/Admin/Includes/head.php'; ?>
+<?php include_once 'src/Views/Admin/Includes/head.php'; ?>
 
 <body>
 
     <!-- ======= Header ======= -->
-    <?php include 'src/Views/Admin/Includes/header.php'; ?>
+    <?php include_once 'src/Views/Admin/Includes/header.php'; ?>
 
     <!-- ======= Sidebar ======= -->
-    <?php include 'src/Views/Admin/Includes/sidebar.php'; ?>
+    <?php include_once 'src/Views/Admin/Includes/sidebar.php'; ?>
 
     <!-- ======= Main Content ======= -->
     <main id="main" class="main">
@@ -21,7 +21,7 @@
     </main>
 
     <!-- ======= Sidebar ======= -->
-    <?php include 'src/Views/Admin/Includes/footer.php'; ?>
+    <?php include_once 'src/Views/Admin/Includes/footer.php'; ?>
 
     <script src="src/Dist/Admin/admin.js"></script>
 </body>

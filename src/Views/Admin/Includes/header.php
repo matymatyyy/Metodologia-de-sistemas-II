@@ -4,7 +4,7 @@
     <div class="d-flex align-items-center justify-content-between">
         <i class="bi bi-list toggle-sidebar-btn"></i>
         <a href="/admin">
-            <img src="src/Dist/Image/logoUTN.png" alt="Logo" style="height:90px; width:auto;">
+            <img src="/src/Dist/Image/logoUTN.png" alt="Logo" style="height:90px; width:auto;">
         </a>
     </div>
 
@@ -13,7 +13,7 @@
             <li class="nav-item dropdown pe-3">
 
                 <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                    <img src="src/Dist/Image/usuario.png" alt="Profile" class="rounded-circle">
+                    <img src="/src/Dist/Image/usuario.png" alt="Profile" class="rounded-circle">
                     <span class="d-none d-md-block dropdown-toggle ps-2"><?php echo $_SESSION['user']['name']; ?></span>
                 </a>
 

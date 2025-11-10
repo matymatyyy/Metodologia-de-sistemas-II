@@ -8,7 +8,7 @@ final readonly class InscripcionAdminViewController extends ViewController
 {
     public function __construct()
     {
-        parent::__construct("Admin/inscripcion");
+        parent::__construct("Admin/inscripciones");
     }
 
     public function start(): void
