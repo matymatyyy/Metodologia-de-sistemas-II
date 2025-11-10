@@ -31,8 +31,8 @@
             <div class="footer-section">
                 <h3>Enlaces Útiles</h3>
                 <ul>
-                    <li><a href="#about">Sobre Nosotros</a></li>
-                    <li><a href="#courses">Carreras</a></li>
+                    <li><a href="/#about">Sobre Nosotros</a></li>
+                    <li><a href="/#courses">Carreras</a></li>
                     <li><a href="https://www.frsn.utn.edu.ar/?page_id=689">Inscripciones</a></li>
                     <li><a href="https://www.frsn.utn.edu.ar">Facultad Regional</a></li>
                     <li><a href="/contacto">Contacto</a></li>
@@ -42,11 +42,11 @@
             <div class="footer-section">
                 <h3>Nuestras Carreras</h3>
                 <ul>
-                    <li><a href="#">Lic. en Organización Industrial</a></li>
-                    <li><a href="#">Lic. en Administración Rural</a></li>
-                    <li><a href="#">Tec. Sup. en Industrias Alimentarias</a></li>
-                    <li><a href="#">Tec. en Mantenimiento Industrial</a></li>
-                    <li><a href="#">Ciclo Lic. en Administración</a></li>
+                    <li><a href="/#">Lic. en Organización Industrial</a></li>
+                    <li><a href="/#">Lic. en Administración Rural</a></li>
+                    <li><a href="/#">Tec. Sup. en Industrias Alimentarias</a></li>
+                    <li><a href="/#">Tec. en Mantenimiento Industrial</a></li>
+                    <li><a href="/#">Ciclo Lic. en Administración</a></li>
                 </ul>
             </div>
 

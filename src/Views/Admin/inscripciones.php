@@ -1,4 +1,5 @@
 <?php
+    $_SESSION['usuario'] = "Admin";
     $_SESSION['rol'] = "Secretario";
 ?>
 
@@ -16,14 +17,14 @@
     <!-- ======= Main Content ======= -->
     <main id="main" class="main">
         <div class="pagetitle">
-            <h1>Bienvenido al panel, <?php echo $_SESSION['user']['name']; ?></h1>
+            <h1>Bienvenido al panel, <?php echo $_SESSION['usuario']; ?></h1>
         </div>
     </main>
 
     <!-- ======= Sidebar ======= -->
     <?php include 'src/Views/Admin/Includes/footer.php'; ?>
 
-    <script src="src/Dist/Admin/admin.js"></script>
+    <script src="src/Dist/Admin/inscripciones.js"></script>
 </body>
 
 </html>

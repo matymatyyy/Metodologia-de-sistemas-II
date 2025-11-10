@@ -16,7 +16,8 @@
         <div class="loader"></div>
     </div>
 
-    <?php include_once '../Includes/header.php'; ?>
+    <?php include_once 'src/Views/Includes/header.php'; ?>
+
 
     <!-- Hero Section -->
   <section class="hero" id="home">
@@ -106,7 +107,7 @@ A partir del envio de la inscripción la comunicación será a través de correo
 
 
  
-    <?php include '../Includes/footer.php'; ?>
+    <?php include 'src/Views/Includes/footer.php'; ?>
 
     <!-- Scroll to Top Button -->
     <div class="scroll-top" id="scrollTop" onclick="scrollToTop()">

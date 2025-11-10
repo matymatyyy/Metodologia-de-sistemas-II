@@ -53,10 +53,10 @@ final readonly class InscripcionRoutes {
       ] ,     
       [
         "name" => "inscripcion_view",
-        "url" => "/inscripciones",
+        "url" => "/inscripcion",
         "controller" => "Inscripcion/InscripcionViewController.php",
         "method" => "GET"
-      ],
+      ]
     ];
   }
 }

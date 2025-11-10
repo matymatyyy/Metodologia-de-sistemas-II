@@ -1,7 +1,7 @@
 <?php
+use Src\Middleware\AuthMiddleware;
 
 include_once $_SERVER["DOCUMENT_ROOT"].'/src/Controller/ViewController.php';
-
 final readonly class AdminViewController extends ViewController{
 
 
@@ -9,7 +9,9 @@ final readonly class AdminViewController extends ViewController{
         parent::__construct("Admin/admin");
     }
 
-    public function start(): void{
+    public function start(): void
+    {
+        AuthMiddleware::handleSession(true);    
         parent::call("");
     }
 }

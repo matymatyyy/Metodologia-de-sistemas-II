@@ -52,6 +52,12 @@ final readonly class UsuarioRoutes {
         "method" => "POST"
       ],
       [
+        "name" => "usuario_logout",
+        "url" => "/logout",
+        "controller" => "User/UserLogoutController.php",
+        "method" => "GET"
+      ],
+      [
         "name" => "login_view",
         "url" => "/login",
         "controller" => "User/LoginViewController.php",

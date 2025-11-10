@@ -9,7 +9,12 @@ final readonly class AdminRoutes {
         "controller" => "Admin/AdminViewController.php",
         "method" => "GET"
       ],
-         
+      [
+        "name" => "inscripcion_view",
+        "url" => "/admin/inscripciones",
+        "controller" => "Admin/InscripcionAdminViewController.php",
+        "method" => "GET"
+      ],
     ];
   }
 }
