@@ -42,7 +42,20 @@ $_SESSION['rol'] = "Secretario";
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="card-title">Listado de Inscripciones</h5>
+                                <button class="btn btn-primary" onclick="nuevaInscripcion()">
+                                <i class="bi bi-plus-circle"></i> Nueva Inscripción
+                                </button>
                             </div>
+                            <div class="row mb-3">
+    <div class="col-md-4">
+        <label for="filtro_carrera" class="form-label">Filtrar inscriptos por carrera</label>
+        <select id="filtro_carrera" class="form-select">
+            <option value="">Todas</option>
+        </select>
+    </div>
+</div>
+
+                            
 
                             <div class="table-responsive">
                                 <table id="tablaInscripciones" class="table table-striped table-hover" style="width:100%">
@@ -129,7 +142,9 @@ $_SESSION['rol'] = "Secretario";
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar</button>
+                        <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> <span id="btnGuardarTexto">Guardar</span>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -139,112 +154,241 @@ $_SESSION['rol'] = "Secretario";
     <?php include_once 'src/Views/Admin/Includes/footer.php'; ?>
 
     <script>
-        $(document).ready(function () {
+    // Variable global para almacenar las carreras
+    let carrerasMap = {};
+    let dataTable;
+
+    $(document).ready(function () {
+        // Primero cargar las carreras, luego inicializar TODO
+        cargarTodasLasCarreras().then(() => {
+            console.log('Carreras cargadas:', carrerasMap);
             inicializarDataTable();
-            cargarCarreras();
+            cargarFiltroCarreras();
         });
+    });
 
-        // === Cargar carreras en el select ===
-        function cargarCarreras() {
-            $.get('http://localhost:8080/carreras', function (res) {
-                const carreras = res.data || [];
-                const select = $('#id_carrera');
-                select.empty().append('<option value="">Seleccione una carrera</option>');
+// === Cargar todas las carreras ===
+function cargarTodasLasCarreras() {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: 'http://localhost:8080/carreras',
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                console.log('Respuesta parseada:', res);
+                
+                let carreras = [];
+                
+                if (res && res.data && Array.isArray(res.data)) {
+                    carreras = res.data;
+                    console.log('Carreras encontradas:', carreras);
+                }
+                
+                // Poblar el mapa de carreras
                 carreras.forEach(c => {
-                    select.append(`<option value="${c.id}">${c.titulo}</option>`);
+                    if (c && c.id && c.titulo) {
+                        carrerasMap[c.id] = c.titulo;
+                    }
                 });
-            });
-        }
-
-        // === Inicializar DataTable ===
-        function inicializarDataTable() {
-            $('#tablaInscripciones').DataTable({
-                ajax: {
-                    url: 'http://localhost:8080/inscripciones',
-                    type: 'GET',
-                    dataSrc: json => json.data || [],
-                    error: xhr => {
-                        Swal.fire('Error', 'No se pudieron cargar las inscripciones', 'error');
-                        console.error(xhr.responseText);
-                    }
-                },
-                columns: [
-                    { data: 'id' },
-                    { data: 'nombre' },
-                    { data: 'apellido' },
-                    { data: 'email' },
-                    { data: 'telefono' },
-                    { data: 'dni' },
-                    { data: 'fecha', render: d => d ? new Date(d).toLocaleDateString('es-AR') : 'N/A' },
-                    { data: 'id_carrera', render: id => `<span class="badge bg-info">${id}</span>` },
-                    {
-                        data: 'activo',
-                        render: d => d == 1
-                            ? `<span class="badge bg-success">Activo</span>`
-                            : `<span class="badge bg-danger">Inactivo</span>`
-                    },
-                    {
-                        data: null,
-                        render: r => `
-                            <div class="action-buttons">
-                                <button class="btn btn-sm btn-warning" onclick="editarInscripcion(${r.id})">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </div>`
-                    }
-                ],
-                // language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
-                pageLength: 10,
-                order: [[0, 'desc']],
-                responsive: true
-            });
-        }
-
-        // === Editar inscripción ===
-        function editarInscripcion(id) {
-            $.get(`http://localhost:8080/inscripciones/${id}`, res => {
-                const data = res.data || res;
-                $('#inscripcion_id').val(data.id);
-                $('#nombre').val(data.nombre);
-                $('#apellido').val(data.apellido);
-                $('#email').val(data.email);
-                $('#telefono').val(data.telefono);
-                $('#dni').val(data.dni);
-                $('#fecha').val(data.fecha);
-                $('#id_carrera').val(data.id_carrera);
-                $('#activo').prop('checked', data.activo == 1);
-                $('#modalInscripcion').modal('show');
-            });
-        }
-
-        // === Guardar inscripción (solo editar) ===
-        $('#formInscripcion').on('submit', function (e) {
-            e.preventDefault();
-
-            const id = $('#inscripcion_id').val();
-            const data = {
-                nombre: $('#nombre').val(),
-                apellido: $('#apellido').val(),
-                email: $('#email').val(),
-                telefono: $('#telefono').val(),
-                dni: $('#dni').val(),
-                fecha: $('#fecha').val(),
-                id_carrera: $('#id_carrera').val(),
-                activo: $('#activo').is(':checked') ? 1 : 0
-            };
-
-            $.ajax({
-                url: `http://localhost:8080/inscripciones/${id}`,
-                type: 'PUT',
-                data,
-                success: res => {
-                    Swal.fire('Éxito', 'Inscripción actualizada correctamente', 'success');
-                    $('#modalInscripcion').modal('hide');
-                    $('#tablaInscripciones').DataTable().ajax.reload();
-                },
-                error: () => Swal.fire('Error', 'No se pudo actualizar la inscripción', 'error')
-            });
+                
+                console.log('Mapa de carreras creado:', carrerasMap);
+                
+                // Cargar select del modal
+                const selectModal = $('#id_carrera');
+                selectModal.empty().append('<option value="">Seleccione una carrera</option>');
+                carreras.forEach(c => {
+                    selectModal.append(`<option value="${c.id}">${c.titulo}</option>`);
+                });
+                
+                resolve();
+            },
+            error: function(error) {
+                console.error('Error cargando carreras:', error);
+                reject(error);
+            }
         });
-    </script>
+    });
+}
+
+
+// === Cargar carreras en el filtro ===
+function cargarFiltroCarreras() {
+    $.ajax({
+        url: 'http://localhost:8080/carreras',
+        type: 'GET', 
+        dataType: 'json',
+        success: function(res) {
+            const carreras = res.data || [];
+            const select = $('#filtro_carrera');
+            select.empty().append('<option value="">Todas las carreras</option>');
+            carreras.forEach(c => {
+                select.append(`<option value="${c.id}">${c.titulo}</option>`);
+                carrerasMap[c.id] = c.titulo;
+            });
+        }
+    });
+}
+
+    // === Inicializar DataTable ===
+    function inicializarDataTable() {
+        dataTable = $('#tablaInscripciones').DataTable({
+            ajax: {
+                url: 'http://localhost:8080/inscripciones',
+                type: 'GET',
+                dataType: 'json',
+                dataSrc: json => {
+                    console.log('Datos de inscripciones cargados:', json);
+                    return json.data || [];
+                }
+            },
+            columns: [
+                { data: 'id' },
+                { data: 'nombre' },
+                { data: 'apellido' },
+                { data: 'email' },
+                { data: 'telefono' },
+                { data: 'dni' },
+                { 
+                    data: 'fecha', 
+                    render: d => d ? new Date(d).toLocaleDateString('es-AR') : 'N/A' 
+                },
+                { 
+                    data: 'id_carrera', 
+                    render: id => {
+                        console.log('Renderizando carrera ID:', id, 'Nombre:', carrerasMap[id]);
+                        const nombreCarrera = carrerasMap[id] || `Carrera ${id}`;
+                        return `<span class="badge bg-info">${nombreCarrera}</span>`;
+                    }
+                },
+                {
+                    data: 'activo',
+                    render: d => d == 1
+                        ? `<span class="badge bg-success">Activo</span>`
+                        : `<span class="badge bg-danger">Inactivo</span>`
+                },
+                {
+                    data: null,
+                    render: r => `
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-warning" onclick="editarInscripcion(${r.id})">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </div>`
+                }
+            ],
+            pageLength: 10,
+            order: [[0, 'desc']],
+            responsive: true
+        });
+    }
+
+    // === Nueva Inscripción ===
+    function nuevaInscripcion() {
+    // Limpiar el formulario
+    $('#formInscripcion')[0].reset();
+    $('#inscripcion_id').val(''); // Vaciar el ID para indicar que es nuevo
+    $('#activo').prop('checked', true); // Activar por defecto
+    $('#fecha').val(new Date().toISOString().split('T')[0]); // Fecha actual
+    
+    // Cambiar el título del modal
+    $('#modalInscripcionLabel').text('Nueva Inscripción');
+    
+    $('#modalInscripcion').modal('show');
+}
+
+    // === Editar Inscripción ===
+    function editarInscripcion(id) {
+        $.get(`http://localhost:8080/inscripciones/${id}`, res => {
+            const data = res.data || res;
+            $('#inscripcion_id').val(data.id);
+            $('#nombre').val(data.nombre);
+            $('#apellido').val(data.apellido);
+            $('#email').val(data.email);
+            $('#telefono').val(data.telefono);
+            $('#dni').val(data.dni);
+            $('#fecha').val(data.fecha);
+            $('#id_carrera').val(data.id_carrera);
+            $('#activo').prop('checked', data.activo == 1);
+
+            // Cambiar título a edición
+        $('#modalInscripcionLabel').text('Editar Inscripción');
+        
+        $('#modalInscripcion').modal('show');
+        });
+    }
+
+    // === Actualizar texto del botón según crear/editar ===
+$('#modalInscripcion').on('show.bs.modal', function() {
+    const id = $('#inscripcion_id').val();
+    if (id) {
+        $('#btnGuardarTexto').text('Actualizar');
+    } else {
+        $('#btnGuardarTexto').text('Crear');
+    }
+});
+
+    // === Guardar Inscripción (Crear o Actualizar) ===
+    $('#formInscripcion').on('submit', function (e) {
+        e.preventDefault();
+        const id = $('#inscripcion_id').val();
+        const data = {
+            nombre: $('#nombre').val(),
+            apellido: $('#apellido').val(),
+            email: $('#email').val(),
+            telefono: $('#telefono').val(),
+            dni: $('#dni').val(),
+            fecha: $('#fecha').val(),
+            id_carrera: $('#id_carrera').val(),
+            activo: $('#activo').is(':checked') ? 1 : 0
+        };
+
+// Determinar si es crear o editar
+    if (id) {
+        // EDITAR - PUT
+        $.ajax({
+            url: `http://localhost:8080/inscripciones/${id}`,
+            type: 'PUT',
+            data: data,
+            success: res => {
+                Swal.fire('Éxito', 'Inscripción actualizada correctamente', 'success');
+                $('#modalInscripcion').modal('hide');
+                dataTable.ajax.reload();
+            },
+            error: (xhr) => {
+                Swal.fire('Error', 'No se pudo actualizar la inscripción', 'error');
+            }
+        });
+    } else {
+        // CREAR - POST
+        $.ajax({
+            url: 'http://localhost:8080/inscripciones',
+            type: 'POST',
+            data: data,
+            success: res => {
+                Swal.fire('Éxito', 'Inscripción creada correctamente', 'success');
+                $('#modalInscripcion').modal('hide');
+                dataTable.ajax.reload();
+            },
+            error: (xhr) => {
+                Swal.fire('Error', 'No se pudo crear la inscripción', 'error');
+            }
+        });
+    }
+});
+
+    // === Evento de filtrado ===
+    $('#filtro_carrera').on('change', function () {
+        const idCarrera = $(this).val();
+        console.log('Filtrando por carrera ID:', idCarrera);
+        
+        if (idCarrera === "") {
+            dataTable.ajax.url('http://localhost:8080/inscripciones').load();
+        } else {
+            const url = `http://localhost:8080/inscripciones/carrera/${idCarrera}`;
+            console.log('URL de filtro:', url);
+            dataTable.ajax.url(url).load();
+        }
+    });
+</script>
 </body>
 </html>
