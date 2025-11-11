@@ -8,6 +8,12 @@ final readonly class ContactoRoutes {
         "url" => "/contacto",
         "controller" => "Contacto/ContactoViewController.php",
         "method" => "GET"
+      ],
+      [
+        "name" => "contacto_post",
+        "url" => "/contacto",
+        "controller" => "Contacto/ContactoPostController.php",
+        "method" => "POST"
       ]
     ];
   }
