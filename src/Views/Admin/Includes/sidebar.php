@@ -45,3 +45,13 @@
       </li>
   </ul>
 </aside>
+
+<script>
+    const toggleBtn = document.querySelector('.toggle-sidebar-btn');
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function () {
+            document.body.classList.toggle('toggle-sidebar');
+        });
+    }
+</script>

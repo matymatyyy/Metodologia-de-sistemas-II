@@ -17,4 +17,11 @@ final readonly class InscripcionesSearcherService {
     {
         return $this->inscripcionModel->search();
     }
+
+
+/** @return Inscripcion[] */
+    public function searchByCarrera(int $idCarrera): array
+    {
+        return $this->inscripcionModel->searchByCarrera($idCarrera);
+    }
 }
