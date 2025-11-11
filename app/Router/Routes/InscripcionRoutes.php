@@ -50,7 +50,20 @@ final readonly class InscripcionRoutes {
             "type" => "int"
           ]
         ]
-      ] ,     
+      ],
+      [
+    "name" => "inscripciones_by_carrera",
+    "url" => "/inscripciones/carrera",
+    "controller" => "Inscripcion/InscripcionesByCarreraGetController.php",
+    "method" => "GET",
+    "parameters" => [
+      [
+        "name" => "id",
+        "type" => "int"
+      ]
+    ]
+],
+     
       [
         "name" => "inscripcion_view",
         "url" => "/inscripcion",
