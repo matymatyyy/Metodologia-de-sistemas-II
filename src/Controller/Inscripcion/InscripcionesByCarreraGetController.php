@@ -15,9 +15,9 @@ final readonly class InscripcionesByCarreraGetController extends AuthMiddleware 
     // <-- recibir el id como INT
     public function start(int $id): void
     {
-        $idCarrera = $_GET['id'] ?? 0;
+   
 
-        if ($idCarrera <= 0) {
+        if ($id <= 0) {
             http_response_code(400);
             echo json_encode([
                 "error" => "id es requerido y debe ser válido"
@@ -25,7 +25,7 @@ final readonly class InscripcionesByCarreraGetController extends AuthMiddleware 
             return;
         }
 
-        $inscripciones = $this->service->searchByCarrera($idCarrera);
+        $inscripciones = $this->service->searchByCarrera($id);
 
         echo json_encode([
             "data" => array_map($this->toResponse(), $inscripciones),
