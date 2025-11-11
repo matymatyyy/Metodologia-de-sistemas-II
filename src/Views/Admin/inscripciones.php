@@ -273,6 +273,9 @@ function cargarFiltroCarreras() {
                             <button class="btn btn-sm btn-warning" onclick="editarInscripcion(${r.id})">
                                 <i class="bi bi-pencil"></i>
                             </button>
+                            <button class="btn btn-sm btn-danger" onclick="eliminarInscripcion(${r.id})">
+                                <i class="bi bi-trash"></i>
+                            </button>     
                         </div>`
                 }
             ],
@@ -281,6 +284,24 @@ function cargarFiltroCarreras() {
             responsive: true
         });
     }
+
+    const validators = {
+    email: (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+    apellido: (val) => val.trim().length >= 5,
+    dni: (val) => /^\d{7,9}$/.test(val),
+    //address: (val) => val.trim().length >= 5,
+    //city: (val) => val.trim().length >= 3,
+    telefono: (val) => /^\d{8,}$/.test(val.replace(/\D/g, "")),
+    //fecha: (val) => /^\d{2}\/\d{2}\/\d{4}$/.test(val) && isValidDate(val),
+    id_carrera: (val) => val !== "",
+    //terms: (checked) => checked === true,
+  };
+
+  function isValidDate(dateStr) {
+    const [d, m, y] = dateStr.split("/").map(Number);
+    const date = new Date(y, m - 1, d);
+    return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d;
+  }
 
     // === Nueva Inscripción ===
     function nuevaInscripcion() {
@@ -298,8 +319,12 @@ function cargarFiltroCarreras() {
 
     // === Editar Inscripción ===
     function editarInscripcion(id) {
-        $.get(`http://localhost:8080/inscripciones/${id}`, res => {
+        console.log('Editar inscripción ID:', id);
+        $.getJSON(`http://localhost:8080/inscripciones/${id}`, res => {
             const data = res.data || res;
+            //data = JSON.parse(data);
+            console.log (data.nombre);
+            console.log('Datos de la inscripción obtenidos:', data);
             $('#inscripcion_id').val(data.id);
             $('#nombre').val(data.nombre);
             $('#apellido').val(data.apellido);
@@ -341,6 +366,23 @@ $('#modalInscripcion').on('show.bs.modal', function() {
             id_carrera: $('#id_carrera').val(),
             activo: $('#activo').is(':checked') ? 1 : 0
         };
+        // Validaciones
+        let isValid = true;
+        Object.keys(validators).forEach((field) => {
+      const input = document.getElementById(field);
+      const error = document.getElementById(field + "Error");
+
+      const value = field === "terms" ? input.checked : input.value;
+      if (!validators[field](value)) {
+        alert("Por favor, ingrese un valor válido para " + field);
+        isValid = false;
+      }
+    });
+
+
+    if (!isValid) {
+        return; // Detener el envío si hay errores de validación
+    }
 
 // Determinar si es crear o editar
     if (id) {
@@ -348,7 +390,8 @@ $('#modalInscripcion').on('show.bs.modal', function() {
         $.ajax({
             url: `http://localhost:8080/inscripciones/${id}`,
             type: 'PUT',
-            data: data,
+            contentType: 'application/json',
+            data: JSON.stringify(data),
             success: res => {
                 Swal.fire('Éxito', 'Inscripción actualizada correctamente', 'success');
                 $('#modalInscripcion').modal('hide');
@@ -363,7 +406,8 @@ $('#modalInscripcion').on('show.bs.modal', function() {
         $.ajax({
             url: 'http://localhost:8080/inscripciones',
             type: 'POST',
-            data: data,
+            contentType: 'application/json',
+            data: JSON.stringify(data),
             success: res => {
                 Swal.fire('Éxito', 'Inscripción creada correctamente', 'success');
                 $('#modalInscripcion').modal('hide');
@@ -375,6 +419,42 @@ $('#modalInscripcion').on('show.bs.modal', function() {
         });
     }
 });
+
+// Eliminar inscripcion
+        function eliminarInscripcion(id) {
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: "Esta acción eliminará la inscripcion y todas sus relaciones",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `http://localhost:8080/inscripciones/${id}`,
+                        type: 'DELETE',
+                        contentType: 'application/json',
+                        success: function(response) {
+                            console.log('Respuesta eliminar:', response);
+                            
+                            if(response.success !== false) {
+                                Swal.fire('Eliminado', response.message || 'inscripcion eliminada correctamente', 'success');
+                                dataTable.ajax.reload();
+                            } else {
+                                Swal.fire('Error', response.message || 'Error al eliminar', 'error');
+                            }
+                        },
+                        error: function(xhr, error, thrown) {
+                            console.error('Error al eliminar:', error);
+                            Swal.fire('Error', 'Error al eliminar la inscripcion', 'error');
+                        }
+                    });
+                }
+            });
+        }
 
     // === Evento de filtrado ===
     $('#filtro_carrera').on('change', function () {
