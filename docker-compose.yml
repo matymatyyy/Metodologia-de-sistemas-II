@@ -4,7 +4,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./src:/var/www/html:ro
+      - .:/var/www/html:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
     depends_on:
       php:
@@ -12,19 +12,19 @@ services:
     networks:
       appnet:
         aliases: [web]
-
+  
   php:
     build:
       context: ./php
       dockerfile: Dockerfile
     volumes:
-      - ./src:/var/www/html
+      - .:/var/www/html
     networks:
       - appnet
     depends_on:
       db:
         condition: service_healthy
-
+  
   db:
     image: mariadb:10.5
     restart: unless-stopped
@@ -43,7 +43,7 @@ services:
       timeout: 5s
       retries: 10
       start_period: 30s
-
+  
   phpmyadmin:
     image: phpmyadmin:5
     ports:

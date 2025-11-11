@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UTN Chacabuco</title>
-    <link href="../../Dist/fontawesome/css/all.min.css" rel="stylesheet">
-    <link rel="icon" href="../../Dist/Image/image.webp" type="image/png">
-    <link href="../../Dist/Header/header.css" rel="stylesheet">
-    <link href="../../Dist/Home/home.css" rel="stylesheet">
-    <link href="../../Dist/Footer/footer.css" rel="stylesheet">
+    <link href="src/Dist/fontawesome/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="src/Dist/Image/image.webp" type="image/png">
+    <link href="src/Dist/Header/header.css" rel="stylesheet">
+    <link href="src/Dist/Home/home.css" rel="stylesheet">
+    <link href="src/Dist/Footer/footer.css" rel="stylesheet">
 </head>
 <body>
     <!-- Page Loader -->
@@ -16,7 +16,7 @@
         <div class="loader"></div>
     </div>
 
-    <?php include '../Includes/header.php'; ?>
+    <?php include 'src/Views/Includes/header.php'; ?>
 
     <!-- Hero Section -->
     <section class="hero" id="home">
@@ -168,15 +168,15 @@
         </div>
     </section>
 
-    <?php include '../Includes/footer.php'; ?>
+    <?php include 'src/Views/Includes/footer.php'; ?>
 
     <!-- Scroll to Top Button -->
     <div class="scroll-top" id="scrollTop" onclick="scrollToTop()">
         <i class="fas fa-chevron-up"></i>
     </div>
 
-    <script src="../../Dist/Header/header.js"></script>
-    <script src="../../Dist/Home/home.js"></script>
-    <script src="../../Dist/Footer/footer.js"></script>
+    <script src="src/Dist/Header/header.js"></script>
+    <script src="src/Dist/Home/home.js"></script>
+    <script src="src/Dist/Footer/footer.js"></script>
 </body>
 </html>

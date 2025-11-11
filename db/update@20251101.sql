@@ -1,0 +1,1 @@
+ALTER TABLE `usuarios` CHANGE `token_auth_date` `token_auth_date` DATETIME NULL DEFAULT NULL;

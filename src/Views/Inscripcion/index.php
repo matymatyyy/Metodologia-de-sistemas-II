@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UTN Chacabuco</title>
-    <link href="../../Dist/fontawesome/css/all.min.css" rel="stylesheet">
-    <link rel="icon" href="../../Dist/Image/image.webp" type="image/png">
-    <link href="../../Dist/Header/header.css" rel="stylesheet">
-    <link href="../../Dist/Inscripcion/Inscripcion.css" rel="stylesheet">
-    <link href="../../Dist/Footer/footer.css" rel="stylesheet">
+    <link href="/src/Dist/fontawesome/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/src/Dist/Image/image.webp" type="image/png">
+    <link href="/src/Dist/Header/header.css" rel="stylesheet">
+    <link href="/src/Dist/Inscripcion/Inscripcion.css" rel="stylesheet">
+    <link href="/src/Dist/Footer/footer.css" rel="stylesheet">
 </head>
 <body>
     <!-- Page Loader -->
@@ -16,7 +16,7 @@
         <div class="loader"></div>
     </div>
 
-    <?php include '../Includes/header.php'; ?>
+    <?php include_once '../Includes/header.php'; ?>
 
     <!-- Hero Section -->
   <section class="hero" id="home">
@@ -113,9 +113,9 @@ A partir del envio de la inscripción la comunicación será a través de correo
         <i class="fas fa-chevron-up"></i>
     </div>
 
-    <script src="../../Dist/Header/header.js"></script>
-    <script src="../../Dist/Home/home.js"></script>
-    <script src="../../Dist/Inscripcion/Inscripcion.js"></script>
-    <script src="../../Dist/Footer/footer.js"></script>
+    <script src="/src/Dist/Header/header.js"></script>
+    <script src="/src/Dist/Home/home.js"></script>
+    <script src="/src/Dist/Inscripcion/Inscripcion.js"></script>
+    <script src="/src/Dist/Footer/footer.js"></script>
 </body>
 </html>

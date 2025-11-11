@@ -1,0 +1,114 @@
+{
+	"info": {
+		"_postman_id": "0ac913d7-e83d-4a74-8cfa-bd5cb2c6cc75",
+		"name": "Preinscripciones",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26676677"
+	},
+	"item": [
+		{
+			"name": "Carreras",
+			"item": [
+				{
+					"name": "Get Carreras",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/carreras",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"carreras"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Carrera",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/carreras/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"carreras",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Carrera",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"titulo\": \"Programacion\",\r\n    \"fecha_inicio\": \"2024-10-16\",\r\n    \"fecha_fin\": \"2025-10-16\",\r\n    \"cupos\": 90,\r\n    \"activo\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/carreras",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"carreras"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Carrera",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"titulo\": \"Programacion 2\",\r\n    \"fecha_inicio\": \"2023-10-16\",\r\n    \"fecha_fin\": \"2024-10-16\",\r\n    \"cupos\": 95,\r\n    \"activo\": 1\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/carreras/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"carreras",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Carrera",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
