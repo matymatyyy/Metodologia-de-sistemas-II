@@ -12,10 +12,19 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
 
         const viewUrl = $(this).attr("href"); // Ej: /admin/inscripciones
-        $(".sidebar-nav .nav-link").removeClass("active");
-        $(this).addClass("active");
 
-        $("#dashboard-content").html(`
+        if (viewUrl === "/admin" || viewUrl === "/admin/") {
+            window.location.href = viewUrl;
+            return;
+        }
+        
+        // Limpiar estados anteriores
+        $(".sidebar-nav .nav-link").removeClass("active").addClass("collapsed");
+        
+        // Activar el elemento clickeado
+        $(this).addClass("active").removeClass("collapsed");
+
+        $("#main").html(`
             <div class="text-center p-5">
                 <div class="spinner-border text-primary"></div>
                 <p class="mt-3">Cargando vista...</p>
@@ -26,10 +35,10 @@ document.addEventListener('DOMContentLoaded', function () {
             url: viewUrl,
             type: "GET",
             success: function (response) {
-                $("#dashboard-content").html(response);
+                $("#main").html(response);
             },
             error: function (xhr) {
-                $("#dashboard-content").html(`
+                $("#main").html(`
                     <div class='alert alert-danger'>
                         Error al cargar la vista solicitada.
                     </div>

@@ -1,87 +1,68 @@
-<?php
-$_SESSION['rol'] = "Secretario";
-?>
+<style>
+    .action-buttons .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        margin: 0 2px;
+    }
+    .badge {
+        font-size: 0.85rem;
+        padding: 0.35em 0.65em;
+    }
+    .card {
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+    }
+</style>
 
-<!-- ======= Head ======= -->
-<?php include_once 'src/Views/Admin/Includes/head.php'; ?>
-
-<body>
-    <!-- ======= Header ======= -->
-    <?php include_once 'src/Views/Admin/Includes/header.php'; ?>
-
-    <!-- ======= Sidebar ======= -->
-    <?php include_once 'src/Views/Admin/Includes/sidebar.php'; ?>
-
-    <style>
-        .action-buttons .btn {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-            margin: 0 2px;
-        }
-
-        .badge {
-            font-size: 0.85rem;
-            padding: 0.35em 0.65em;
-        }
-
-        .card {
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            border-radius: 10px;
-        }
-    </style>
-
-    <main id="main" class="main">
-        <div class="pagetitle">
-            <h1>Gestión de Inscripciones</h1>
-        </div>
-
-        <section class="section">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="card-title">Listado de Inscripciones</h5>
-                                <button class="btn btn-primary" onclick="nuevaInscripcion()">
-                                <i class="bi bi-plus-circle"></i> Nueva Inscripción
-                                </button>
-                            </div>
-                            <div class="row mb-3">
-    <div class="col-md-4">
-        <label for="filtro_carrera" class="form-label">Filtrar inscriptos por carrera</label>
-        <select id="filtro_carrera" class="form-select">
-            <option value="">Todas</option>
-        </select>
+    <div class="pagetitle">
+        <h1>Gestión de Inscripciones</h1>
     </div>
-</div>
 
-                            
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title">Listado de Inscripciones</h5>
+                            <button class="btn btn-primary" onclick="nuevaInscripcion()">
+                            <i class="bi bi-plus-circle"></i> Nueva Inscripción
+                            </button>
+                        </div>
 
-                            <div class="table-responsive">
-                                <table id="tablaInscripciones" class="table table-striped table-hover" style="width:100%">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Nombre</th>
-                                            <th>Apellido</th>
-                                            <th>Email</th>
-                                            <th>Teléfono</th>
-                                            <th>DNI</th>
-                                            <th>Fecha</th>
-                                            <th>Carrera</th>
-                                            <th>Activo</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="filtro_carrera" class="form-label">Filtrar inscriptos por carrera</label>
+                                <select id="filtro_carrera" class="form-select">
+                                    <option value="">Todas</option>
+                                </select>
                             </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table id="tablaInscripciones" class="table table-striped table-hover" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Apellido</th>
+                                        <th>Email</th>
+                                        <th>Teléfono</th>
+                                        <th>DNI</th>
+                                        <th>Fecha</th>
+                                        <th>Carrera</th>
+                                        <th>Activo</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
 
     <!-- Modal Editar Inscripción -->
     <div class="modal fade" id="modalInscripcion" tabindex="-1" aria-labelledby="modalInscripcionLabel" aria-hidden="true">
@@ -151,17 +132,20 @@ $_SESSION['rol'] = "Secretario";
         </div>
     </div>
 
-    <?php include_once 'src/Views/Admin/Includes/footer.php'; ?>
-
     <script>
-    // Variable global para almacenar las carreras
-    let carrerasMap = {};
-    let dataTable;
+    // Limpiar DataTable anterior si existe
+    if (typeof window.dataTable !== 'undefined' && window.dataTable) {
+        window.dataTable.destroy();
+    }
+
+    // Variables globales para almacenar las carreras
+    window.carrerasMap = {};
+    window.dataTable = null;
 
     $(document).ready(function () {
         // Primero cargar las carreras, luego inicializar TODO
         cargarTodasLasCarreras().then(() => {
-            console.log('Carreras cargadas:', carrerasMap);
+            console.log('Carreras cargadas:', window.carrerasMap);
             inicializarDataTable();
             cargarFiltroCarreras();
         });
@@ -187,11 +171,11 @@ function cargarTodasLasCarreras() {
                 // Poblar el mapa de carreras
                 carreras.forEach(c => {
                     if (c && c.id && c.titulo) {
-                        carrerasMap[c.id] = c.titulo;
+                        window.carrerasMap[c.id] = c.titulo;
                     }
                 });
                 
-                console.log('Mapa de carreras creado:', carrerasMap);
+                console.log('Mapa de carreras creado:', window.carrerasMap);
                 
                 // Cargar select del modal
                 const selectModal = $('#id_carrera');
@@ -223,7 +207,7 @@ function cargarFiltroCarreras() {
             select.empty().append('<option value="">Todas las carreras</option>');
             carreras.forEach(c => {
                 select.append(`<option value="${c.id}">${c.titulo}</option>`);
-                carrerasMap[c.id] = c.titulo;
+                window.carrerasMap[c.id] = c.titulo;
             });
         }
     });
@@ -231,7 +215,8 @@ function cargarFiltroCarreras() {
 
     // === Inicializar DataTable ===
     function inicializarDataTable() {
-        dataTable = $('#tablaInscripciones').DataTable({
+        console.log('Inicializando DataTable...');
+        window.dataTable = $('#tablaInscripciones').DataTable({
             ajax: {
                 url: 'http://localhost:8080/inscripciones',
                 type: 'GET',
@@ -250,13 +235,18 @@ function cargarFiltroCarreras() {
                 { data: 'dni' },
                 { 
                     data: 'fecha', 
-                    render: d => d ? new Date(d).toLocaleDateString('es-AR') : 'N/A' 
+                    render: d => {
+                        if (!d) return 'N/A';
+                        // Evitar problemas de zona horaria parseando manualmente
+                        const [year, month, day] = d.split('-');
+                        return new Date(year, month - 1, day).toLocaleDateString('es-AR');
+                    }
                 },
                 { 
                     data: 'id_carrera', 
                     render: id => {
-                        console.log('Renderizando carrera ID:', id, 'Nombre:', carrerasMap[id]);
-                        const nombreCarrera = carrerasMap[id] || `Carrera ${id}`;
+                        console.log('Renderizando carrera ID:', id, 'Nombre:', window.carrerasMap[id]);
+                        const nombreCarrera = window.carrerasMap[id] || `Carrera ${id}`;
                         return `<span class="badge bg-info">${nombreCarrera}</span>`;
                     }
                 },
@@ -281,11 +271,31 @@ function cargarFiltroCarreras() {
             ],
             pageLength: 10,
             order: [[0, 'desc']],
-            responsive: true
+            responsive: true,
+            language: {
+                "decimal": "",
+                "emptyTable": "No hay datos disponibles en la tabla",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado de _MAX_ entradas totales)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ entradas",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "search": "Buscar:",
+                "zeroRecords": "No se encontraron registros que coincidan",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
         });
     }
 
-    const validators = {
+    window.validators = {
     email: (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
     apellido: (val) => val.trim().length >= 5,
     dni: (val) => /^\d{7,9}$/.test(val),
@@ -368,12 +378,12 @@ $('#modalInscripcion').on('show.bs.modal', function() {
         };
         // Validaciones
         let isValid = true;
-        Object.keys(validators).forEach((field) => {
+        Object.keys(window.validators).forEach((field) => {
       const input = document.getElementById(field);
       const error = document.getElementById(field + "Error");
 
       const value = field === "terms" ? input.checked : input.value;
-      if (!validators[field](value)) {
+      if (!window.validators[field](value)) {
         alert("Por favor, ingrese un valor válido para " + field);
         isValid = false;
       }
@@ -395,7 +405,7 @@ $('#modalInscripcion').on('show.bs.modal', function() {
             success: res => {
                 Swal.fire('Éxito', 'Inscripción actualizada correctamente', 'success');
                 $('#modalInscripcion').modal('hide');
-                dataTable.ajax.reload();
+                window.dataTable.ajax.reload();
             },
             error: (xhr) => {
                 Swal.fire('Error', 'No se pudo actualizar la inscripción', 'error');
@@ -411,7 +421,7 @@ $('#modalInscripcion').on('show.bs.modal', function() {
             success: res => {
                 Swal.fire('Éxito', 'Inscripción creada correctamente', 'success');
                 $('#modalInscripcion').modal('hide');
-                dataTable.ajax.reload();
+                window.dataTable.ajax.reload();
             },
             error: (xhr) => {
                 Swal.fire('Error', 'No se pudo crear la inscripción', 'error');
@@ -442,7 +452,7 @@ $('#modalInscripcion').on('show.bs.modal', function() {
                             
                             if(response.success !== false) {
                                 Swal.fire('Eliminado', response.message || 'inscripcion eliminada correctamente', 'success');
-                                dataTable.ajax.reload();
+                                window.dataTable.ajax.reload();
                             } else {
                                 Swal.fire('Error', response.message || 'Error al eliminar', 'error');
                             }
@@ -462,13 +472,11 @@ $('#modalInscripcion').on('show.bs.modal', function() {
         console.log('Filtrando por carrera ID:', idCarrera);
         
         if (idCarrera === "") {
-            dataTable.ajax.url('http://localhost:8080/inscripciones').load();
+            window.dataTable.ajax.url('http://localhost:8080/inscripciones').load();
         } else {
             const url = `http://localhost:8080/inscripciones/carrera/${idCarrera}`;
             console.log('URL de filtro:', url);
-            dataTable.ajax.url(url).load();
+            window.dataTable.ajax.url(url).load();
         }
     });
 </script>
-</body>
-</html>

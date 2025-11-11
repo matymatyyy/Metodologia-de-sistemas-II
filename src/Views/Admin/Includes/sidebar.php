@@ -46,7 +46,7 @@
   </ul>
 </aside>
 
-<script>
+<!-- <script>
     const toggleBtn = document.querySelector('.toggle-sidebar-btn');
 
     if (toggleBtn) {
@@ -54,4 +54,4 @@
             document.body.classList.toggle('toggle-sidebar');
         });
     }
-</script>
+</script> -->
