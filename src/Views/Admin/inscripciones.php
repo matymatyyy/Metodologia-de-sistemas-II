@@ -157,7 +157,6 @@ $_SESSION['rol'] = "Secretario";
         let dataTable;
 
         $(document).ready(function () {
-            // Primero cargar las carreras, luego inicializar TODO
             cargarTodasLasCarreras().then(() => {
                 inicializarDataTable();
                 cargarFiltroCarreras();
@@ -241,7 +240,14 @@ $_SESSION['rol'] = "Secretario";
                     { data: 'dni' },
                     { 
                         data: 'fecha', 
-                        render: d => d ? new Date(d).toLocaleDateString('es-AR') : 'N/A' 
+                        render: function(data, type, row) {
+                            if(!data) return 'N/A';
+                            const partes = data.split('-');
+                            if (partes.length === 3) {
+                                return `${partes[2]}/${partes[1]}/${partes[0]}`;
+                            }
+                            return data;
+                        }
                     },
                     { 
                         data: 'id_carrera', 

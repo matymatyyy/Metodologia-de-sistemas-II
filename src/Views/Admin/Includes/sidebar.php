@@ -161,17 +161,24 @@
           </a>
       </li>
 
-      <li class="nav-item">
+      <!-- <li class="nav-item">
           <a class="nav-link collapsed" href="/admin/carreras-plan">
               <i class="bi bi-journal-bookmark"></i>
               <span>Carreras Plan</span>
           </a>
-      </li>
+      </li> -->
 
-      <li class="nav-item">
+      <!-- <li class="nav-item">
           <a class="nav-link collapsed" href="/admin/noticias">
               <i class="bi bi-newspaper"></i>
               <span>Noticias</span>
+          </a>
+      </li> -->
+
+      <li class="nav-item">
+          <a class="nav-link collapsed" href="/admin/contacto">
+              <i class="bi bi-newspaper"></i>
+              <span>Consultas</span>
           </a>
       </li>
 
