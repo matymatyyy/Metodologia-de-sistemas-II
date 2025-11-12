@@ -218,7 +218,6 @@ async function handleFormSubmit (e) {
     if (existingError) {
         existingError.remove();
     }
-    console.log(password);
     
     // Enviar por AJAX
     fetch('http://localhost:8080/usuario', {
@@ -292,7 +291,7 @@ function showSuccessAndRedirect(userName) {
     
     // Redirigir después de 2.5 segundos
     setTimeout(() => {
-        window.location.href = '/admin';
+        window.location.href = '/admin/home';
     }, 2500);
 }
 
@@ -414,4 +413,3 @@ TECNOLOGÍAS UTILIZADAS:
 */
 
 // login listo para usar
-console.log('Login cargado correctamente');

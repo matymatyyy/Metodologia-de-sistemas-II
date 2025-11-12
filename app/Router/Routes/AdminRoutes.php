@@ -5,7 +5,7 @@ final readonly class AdminRoutes {
     return [
       [
         "name" => "admin_view",
-        "url" => "/admin",
+        "url" => "/admin/home",
         "controller" => "Admin/AdminViewController.php",
         "method" => "GET"
       ],

@@ -1,17 +1,17 @@
 <?php
-    $_SESSION['rol'] = "Secretario";
+$_SESSION['rol'] = "Secretario";
 ?>
 
 <!-- ======= Head ======= -->
 <?php include_once 'src/Views/Admin/Includes/head.php'; ?>
 
 <body>
-
     <!-- ======= Header ======= -->
     <?php include_once 'src/Views/Admin/Includes/header.php'; ?>
 
     <!-- ======= Sidebar ======= -->
     <?php include_once 'src/Views/Admin/Includes/sidebar.php'; ?>
+
 
     <!-- ======= Main Content ======= -->
     <main id="main" class="main">
@@ -22,8 +22,8 @@
 
     <!-- ======= Sidebar ======= -->
     <?php include_once 'src/Views/Admin/Includes/footer.php'; ?>
+    <script src="/src/Dist/Admin/admin.js"></script>
 
-    <script src="src/Dist/Admin/admin.js"></script>
 </body>
 
 </html>

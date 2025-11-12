@@ -154,273 +154,262 @@ $_SESSION['rol'] = "Secretario";
     <?php include_once 'src/Views/Admin/Includes/footer.php'; ?>
 
     <script>
-    // Variable global para almacenar las carreras
-    let carrerasMap = {};
-    let dataTable;
+        // Variable global para almacenar las carreras
+        let carrerasMap = {};
+        let dataTable;
 
-    $(document).ready(function () {
-        // Primero cargar las carreras, luego inicializar TODO
-        cargarTodasLasCarreras().then(() => {
-            console.log('Carreras cargadas:', carrerasMap);
-            inicializarDataTable();
-            cargarFiltroCarreras();
+        $(document).ready(function () {
+            // Primero cargar las carreras, luego inicializar TODO
+            cargarTodasLasCarreras().then(() => {
+                inicializarDataTable();
+                cargarFiltroCarreras();
+            });
         });
-    });
 
-// === Cargar todas las carreras ===
-function cargarTodasLasCarreras() {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: 'http://localhost:8080/carreras',
-            type: 'GET',
-            dataType: 'json',
-            success: function(res) {
-                console.log('Respuesta parseada:', res);
-                
-                let carreras = [];
-                
-                if (res && res.data && Array.isArray(res.data)) {
-                    carreras = res.data;
-                    console.log('Carreras encontradas:', carreras);
-                }
-                
-                // Poblar el mapa de carreras
-                carreras.forEach(c => {
-                    if (c && c.id && c.titulo) {
-                        carrerasMap[c.id] = c.titulo;
+        // === Cargar todas las carreras ===
+        function cargarTodasLasCarreras() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: 'http://localhost:8080/carreras',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(res) {
+                        
+                        let carreras = [];
+                        
+                        if (res && res.data && Array.isArray(res.data)) {
+                            carreras = res.data;
+                        }
+                        
+                        // Poblar el mapa de carreras
+                        carreras.forEach(c => {
+                            if (c && c.id && c.titulo) {
+                                carrerasMap[c.id] = c.titulo;
+                            }
+                        });
+                                            
+                        // Cargar select del modal
+                        const selectModal = $('#id_carrera');
+                        selectModal.empty().append('<option value="">Seleccione una carrera</option>');
+                        carreras.forEach(c => {
+                            selectModal.append(`<option value="${c.id}">${c.titulo}</option>`);
+                        });
+                        
+                        resolve();
+                    },
+                    error: function(error) {
+                        console.error('Error cargando carreras:', error);
+                        reject(error);
                     }
                 });
-                
-                console.log('Mapa de carreras creado:', carrerasMap);
-                
-                // Cargar select del modal
-                const selectModal = $('#id_carrera');
-                selectModal.empty().append('<option value="">Seleccione una carrera</option>');
-                carreras.forEach(c => {
-                    selectModal.append(`<option value="${c.id}">${c.titulo}</option>`);
-                });
-                
-                resolve();
-            },
-            error: function(error) {
-                console.error('Error cargando carreras:', error);
-                reject(error);
-            }
-        });
-    });
-}
-
-
-// === Cargar carreras en el filtro ===
-function cargarFiltroCarreras() {
-    $.ajax({
-        url: 'http://localhost:8080/carreras',
-        type: 'GET', 
-        dataType: 'json',
-        success: function(res) {
-            const carreras = res.data || [];
-            const select = $('#filtro_carrera');
-            select.empty().append('<option value="">Todas las carreras</option>');
-            carreras.forEach(c => {
-                select.append(`<option value="${c.id}">${c.titulo}</option>`);
-                carrerasMap[c.id] = c.titulo;
             });
         }
-    });
-}
 
-    // === Inicializar DataTable ===
-    function inicializarDataTable() {
-        dataTable = $('#tablaInscripciones').DataTable({
-            ajax: {
-                url: 'http://localhost:8080/inscripciones',
-                type: 'GET',
+        // === Cargar carreras en el filtro ===
+        function cargarFiltroCarreras() {
+            $.ajax({
+                url: 'http://localhost:8080/carreras',
+                type: 'GET', 
                 dataType: 'json',
-                dataSrc: json => {
-                    console.log('Datos de inscripciones cargados:', json);
-                    return json.data || [];
+                success: function(res) {
+                    const carreras = res.data || [];
+                    const select = $('#filtro_carrera');
+                    select.empty().append('<option value="">Todas las carreras</option>');
+                    carreras.forEach(c => {
+                        select.append(`<option value="${c.id}">${c.titulo}</option>`);
+                        carrerasMap[c.id] = c.titulo;
+                    });
                 }
-            },
-            columns: [
-                { data: 'id' },
-                { data: 'nombre' },
-                { data: 'apellido' },
-                { data: 'email' },
-                { data: 'telefono' },
-                { data: 'dni' },
-                { 
-                    data: 'fecha', 
-                    render: d => d ? new Date(d).toLocaleDateString('es-AR') : 'N/A' 
-                },
-                { 
-                    data: 'id_carrera', 
-                    render: id => {
-                        console.log('Renderizando carrera ID:', id, 'Nombre:', carrerasMap[id]);
-                        const nombreCarrera = carrerasMap[id] || `Carrera ${id}`;
-                        return `<span class="badge bg-info">${nombreCarrera}</span>`;
+            });
+        }
+
+        // === Inicializar DataTable ===
+        function inicializarDataTable() {
+            dataTable = $('#tablaInscripciones').DataTable({
+                ajax: {
+                    url: 'http://localhost:8080/inscripciones',
+                    type: 'GET',
+                    dataType: 'json',
+                    dataSrc: json => {
+                        return json.data || [];
                     }
                 },
-                {
-                    data: 'activo',
-                    render: d => d == 1
-                        ? `<span class="badge bg-success">Activo</span>`
-                        : `<span class="badge bg-danger">Inactivo</span>`
-                },
-                {
-                    data: null,
-                    render: r => `
-                        <div class="action-buttons">
-                            <button class="btn btn-sm btn-warning" onclick="editarInscripcion(${r.id})">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="eliminarInscripcion(${r.id})">
-                                <i class="bi bi-trash"></i>
-                            </button>     
-                        </div>`
-                }
-            ],
-            pageLength: 10,
-            order: [[0, 'desc']],
-            responsive: true
-        });
-    }
+                columns: [
+                    { data: 'id' },
+                    { data: 'nombre' },
+                    { data: 'apellido' },
+                    { data: 'email' },
+                    { data: 'telefono' },
+                    { data: 'dni' },
+                    { 
+                        data: 'fecha', 
+                        render: d => d ? new Date(d).toLocaleDateString('es-AR') : 'N/A' 
+                    },
+                    { 
+                        data: 'id_carrera', 
+                        render: id => {
+                            const nombreCarrera = carrerasMap[id] || `Carrera ${id}`;
+                            return `<span class="badge bg-info">${nombreCarrera}</span>`;
+                        }
+                    },
+                    {
+                        data: 'activo',
+                        render: d => d == 1
+                            ? `<span class="badge bg-success">Activo</span>`
+                            : `<span class="badge bg-danger">Inactivo</span>`
+                    },
+                    {
+                        data: null,
+                        render: r => `
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-warning" onclick="editarInscripcion(${r.id})">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="eliminarInscripcion(${r.id})">
+                                    <i class="bi bi-trash"></i>
+                                </button>     
+                            </div>`
+                    }
+                ],
+                pageLength: 10,
+                order: [[0, 'desc']],
+                responsive: true
+            });
+        }
 
-    const validators = {
-    email: (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
-    apellido: (val) => val.trim().length >= 5,
-    dni: (val) => /^\d{7,9}$/.test(val),
-    //address: (val) => val.trim().length >= 5,
-    //city: (val) => val.trim().length >= 3,
-    telefono: (val) => /^\d{8,}$/.test(val.replace(/\D/g, "")),
-    //fecha: (val) => /^\d{2}\/\d{2}\/\d{4}$/.test(val) && isValidDate(val),
-    id_carrera: (val) => val !== "",
-    //terms: (checked) => checked === true,
-  };
-
-  function isValidDate(dateStr) {
-    const [d, m, y] = dateStr.split("/").map(Number);
-    const date = new Date(y, m - 1, d);
-    return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d;
-  }
-
-    // === Nueva Inscripción ===
-    function nuevaInscripcion() {
-    // Limpiar el formulario
-    $('#formInscripcion')[0].reset();
-    $('#inscripcion_id').val(''); // Vaciar el ID para indicar que es nuevo
-    $('#activo').prop('checked', true); // Activar por defecto
-    $('#fecha').val(new Date().toISOString().split('T')[0]); // Fecha actual
-    
-    // Cambiar el título del modal
-    $('#modalInscripcionLabel').text('Nueva Inscripción');
-    
-    $('#modalInscripcion').modal('show');
-}
-
-    // === Editar Inscripción ===
-    function editarInscripcion(id) {
-        console.log('Editar inscripción ID:', id);
-        $.getJSON(`http://localhost:8080/inscripciones/${id}`, res => {
-            const data = res.data || res;
-            //data = JSON.parse(data);
-            console.log (data.nombre);
-            console.log('Datos de la inscripción obtenidos:', data);
-            $('#inscripcion_id').val(data.id);
-            $('#nombre').val(data.nombre);
-            $('#apellido').val(data.apellido);
-            $('#email').val(data.email);
-            $('#telefono').val(data.telefono);
-            $('#dni').val(data.dni);
-            $('#fecha').val(data.fecha);
-            $('#id_carrera').val(data.id_carrera);
-            $('#activo').prop('checked', data.activo == 1);
-
-            // Cambiar título a edición
-        $('#modalInscripcionLabel').text('Editar Inscripción');
-        
-        $('#modalInscripcion').modal('show');
-        });
-    }
-
-    // === Actualizar texto del botón según crear/editar ===
-$('#modalInscripcion').on('show.bs.modal', function() {
-    const id = $('#inscripcion_id').val();
-    if (id) {
-        $('#btnGuardarTexto').text('Actualizar');
-    } else {
-        $('#btnGuardarTexto').text('Crear');
-    }
-});
-
-    // === Guardar Inscripción (Crear o Actualizar) ===
-    $('#formInscripcion').on('submit', function (e) {
-        e.preventDefault();
-        const id = $('#inscripcion_id').val();
-        const data = {
-            nombre: $('#nombre').val(),
-            apellido: $('#apellido').val(),
-            email: $('#email').val(),
-            telefono: $('#telefono').val(),
-            dni: $('#dni').val(),
-            fecha: $('#fecha').val(),
-            id_carrera: $('#id_carrera').val(),
-            activo: $('#activo').is(':checked') ? 1 : 0
+        const validators = {
+            email: (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+            apellido: (val) => val.trim().length >= 5,
+            dni: (val) => /^\d{7,9}$/.test(val),
+            //address: (val) => val.trim().length >= 5,
+            //city: (val) => val.trim().length >= 3,
+            telefono: (val) => /^\d{8,}$/.test(val.replace(/\D/g, "")),
+            //fecha: (val) => /^\d{2}\/\d{2}\/\d{4}$/.test(val) && isValidDate(val),
+            id_carrera: (val) => val !== "",
+            //terms: (checked) => checked === true,
         };
-        // Validaciones
-        let isValid = true;
-        Object.keys(validators).forEach((field) => {
-      const input = document.getElementById(field);
-      const error = document.getElementById(field + "Error");
 
-      const value = field === "terms" ? input.checked : input.value;
-      if (!validators[field](value)) {
-        alert("Por favor, ingrese un valor válido para " + field);
-        isValid = false;
-      }
-    });
+        function isValidDate(dateStr) {
+            const [d, m, y] = dateStr.split("/").map(Number);
+            const date = new Date(y, m - 1, d);
+            return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d;
+        }
 
+        // === Nueva Inscripción ===
+        function nuevaInscripcion() {
+            // Limpiar el formulario
+            $('#formInscripcion')[0].reset();
+            $('#inscripcion_id').val(''); // Vaciar el ID para indicar que es nuevo
+            $('#activo').prop('checked', true); // Activar por defecto
+            $('#fecha').val(new Date().toISOString().split('T')[0]); // Fecha actual
+            
+            // Cambiar el título del modal
+            $('#modalInscripcionLabel').text('Nueva Inscripción');
+            
+            $('#modalInscripcion').modal('show');
+        }
 
-    if (!isValid) {
-        return; // Detener el envío si hay errores de validación
-    }
+        // === Editar Inscripción ===
+        function editarInscripcion(id) {
+            $.getJSON(`http://localhost:8080/inscripciones/${id}`, res => {
+                const data = res.data || res;
+                //data = JSON.parse(data);
+                $('#inscripcion_id').val(data.id);
+                $('#nombre').val(data.nombre);
+                $('#apellido').val(data.apellido);
+                $('#email').val(data.email);
+                $('#telefono').val(data.telefono);
+                $('#dni').val(data.dni);
+                $('#fecha').val(data.fecha);
+                $('#id_carrera').val(data.id_carrera);
+                $('#activo').prop('checked', data.activo == 1);
 
-// Determinar si es crear o editar
-    if (id) {
-        // EDITAR - PUT
-        $.ajax({
-            url: `http://localhost:8080/inscripciones/${id}`,
-            type: 'PUT',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: res => {
-                Swal.fire('Éxito', 'Inscripción actualizada correctamente', 'success');
-                $('#modalInscripcion').modal('hide');
-                dataTable.ajax.reload();
-            },
-            error: (xhr) => {
-                Swal.fire('Error', 'No se pudo actualizar la inscripción', 'error');
+                // Cambiar título a edición
+            $('#modalInscripcionLabel').text('Editar Inscripción');
+            
+            $('#modalInscripcion').modal('show');
+            });
+        }
+
+        // === Actualizar texto del botón según crear/editar ===
+        $('#modalInscripcion').on('show.bs.modal', function() {
+            const id = $('#inscripcion_id').val();
+            if (id) {
+                $('#btnGuardarTexto').text('Actualizar');
+            } else {
+                $('#btnGuardarTexto').text('Crear');
             }
         });
-    } else {
-        // CREAR - POST
-        $.ajax({
-            url: 'http://localhost:8080/inscripciones',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: res => {
-                Swal.fire('Éxito', 'Inscripción creada correctamente', 'success');
-                $('#modalInscripcion').modal('hide');
-                dataTable.ajax.reload();
-            },
-            error: (xhr) => {
-                Swal.fire('Error', 'No se pudo crear la inscripción', 'error');
+
+        // === Guardar Inscripción (Crear o Actualizar) ===
+        $('#formInscripcion').on('submit', function (e) {
+            e.preventDefault();
+            const id = $('#inscripcion_id').val();
+            const data = {
+                nombre: $('#nombre').val(),
+                apellido: $('#apellido').val(),
+                email: $('#email').val(),
+                telefono: $('#telefono').val(),
+                dni: $('#dni').val(),
+                fecha: $('#fecha').val(),
+                id_carrera: $('#id_carrera').val(),
+                activo: $('#activo').is(':checked') ? 1 : 0
+            };
+            // Validaciones
+            let isValid = true;
+            Object.keys(validators).forEach((field) => {
+            const input = document.getElementById(field);
+            const error = document.getElementById(field + "Error");
+
+            const value = field === "terms" ? input.checked : input.value;
+            if (!validators[field](value)) {
+                alert("Por favor, ingrese un valor válido para " + field);
+                isValid = false;
+            }
+            });
+
+
+            if (!isValid) {
+                return; // Detener el envío si hay errores de validación
+            }
+
+            // Determinar si es crear o editar
+            if (id) {
+                // EDITAR - PUT
+                $.ajax({
+                    url: `http://localhost:8080/inscripciones/${id}`,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: res => {
+                        Swal.fire('Éxito', 'Inscripción actualizada correctamente', 'success');
+                        $('#modalInscripcion').modal('hide');
+                        dataTable.ajax.reload();
+                    },
+                    error: (xhr) => {
+                        Swal.fire('Error', 'No se pudo actualizar la inscripción', 'error');
+                    }
+                });
+            } else {
+                // CREAR - POST
+                $.ajax({
+                    url: 'http://localhost:8080/inscripciones',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: res => {
+                        Swal.fire('Éxito', 'Inscripción creada correctamente', 'success');
+                        $('#modalInscripcion').modal('hide');
+                        dataTable.ajax.reload();
+                    },
+                    error: (xhr) => {
+                        Swal.fire('Error', 'No se pudo crear la inscripción', 'error');
+                    }
+                });
             }
         });
-    }
-});
 
-// Eliminar inscripcion
+        // Eliminar inscripcion
         function eliminarInscripcion(id) {
             Swal.fire({
                 title: '¿Está seguro?',
@@ -437,9 +426,7 @@ $('#modalInscripcion').on('show.bs.modal', function() {
                         url: `http://localhost:8080/inscripciones/${id}`,
                         type: 'DELETE',
                         contentType: 'application/json',
-                        success: function(response) {
-                            console.log('Respuesta eliminar:', response);
-                            
+                        success: function(response) {                        
                             if(response.success !== false) {
                                 Swal.fire('Eliminado', response.message || 'inscripcion eliminada correctamente', 'success');
                                 dataTable.ajax.reload();
@@ -456,19 +443,18 @@ $('#modalInscripcion').on('show.bs.modal', function() {
             });
         }
 
-    // === Evento de filtrado ===
-    $('#filtro_carrera').on('change', function () {
-        const idCarrera = $(this).val();
-        console.log('Filtrando por carrera ID:', idCarrera);
-        
-        if (idCarrera === "") {
-            dataTable.ajax.url('http://localhost:8080/inscripciones').load();
-        } else {
-            const url = `http://localhost:8080/inscripciones/carrera/${idCarrera}`;
-            console.log('URL de filtro:', url);
-            dataTable.ajax.url(url).load();
-        }
-    });
-</script>
+        // === Evento de filtrado ===
+        $('#filtro_carrera').on('change', function () {
+            const idCarrera = $(this).val();
+            
+            if (idCarrera === "") {
+                dataTable.ajax.url('http://localhost:8080/inscripciones').load();
+            } else {
+                const url = `http://localhost:8080/inscripciones/carrera/${idCarrera}`;
+                dataTable.ajax.url(url).load();
+            }
+        });
+
+    </script>
 </body>
 </html>
