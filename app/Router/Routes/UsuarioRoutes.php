@@ -62,7 +62,50 @@ final readonly class UsuarioRoutes {
         "url" => "/login",
         "controller" => "User/LoginViewController.php",
         "method" => "GET"
-      ]
+      ],
+      [
+        "name" => "usuario_get",
+        "url" => "/usuarios",
+        "controller" => "User/UserGetController.php",
+        "method" => "GET",
+        "parameters" => [
+          [
+            "name" => "id",
+            "type" => "int"
+          ]
+        ]
+      ],
+      [
+        "name" => "usuarios_get",
+        "url" => "/usuarios",
+        "controller" => "User/UsersGetController.php",
+        "method" => "GET"
+      ],
+      [
+        "name" => "usuario_create",
+        "url" => "/usuarios",
+        "controller" => "User/UserPostController.php",
+        "method" => "POST",
+      ],
+      [
+        "name" => "usuario_update",
+        "url" => "/usuarios",
+        "controller" => "User/UserPutController.php",
+        "method" => "PUT",
+        "parameters" => [
+          [
+            "name" => "id",
+            "type" => "int"
+          ]
+        ]
+      ],
+      [
+        "name" => "usuario_view",
+        "url" => "/usuarios",
+        "controller" => "User/UserViewController.php",
+        "method" => "GET"
+      ],
+
     ];
   }
 }
