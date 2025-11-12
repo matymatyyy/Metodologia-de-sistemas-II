@@ -47,15 +47,13 @@ $_SESSION['rol'] = "Secretario";
                                 </button>
                             </div>
                             <div class="row mb-3">
-    <div class="col-md-4">
-        <label for="filtro_carrera" class="form-label">Filtrar inscriptos por carrera</label>
-        <select id="filtro_carrera" class="form-select">
-            <option value="">Todas</option>
-        </select>
-    </div>
-</div>
-
-                            
+                                <div class="col-md-4">
+                                    <label for="filtro_carrera" class="form-label">Filtrar inscriptos por carrera</label>
+                                    <select id="filtro_carrera" class="form-select">
+                                        <option value="">Todas</option>
+                                    </select>
+                                </div>
+                            </div>
 
                             <div class="table-responsive">
                                 <table id="tablaInscripciones" class="table table-striped table-hover" style="width:100%">
