@@ -15,7 +15,7 @@ final readonly class UserPutController extends AuthMiddleware {
     {
         $name = ControllerUtils::getPost("name");
         $email  = ControllerUtils::getPost("email");
-        $password  = ControllerUtils::getPost("password");
+        $password  = ControllerUtils::getPost("password", false);
         
         $this->service->update(
         $name,

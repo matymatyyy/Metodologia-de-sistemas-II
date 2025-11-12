@@ -20,7 +20,7 @@ final readonly class UserUpdaterService {
     public function update(
         string $name,
         string $email,
-        string $password,
+        ? string $password,
         int $id
     ): void 
     {

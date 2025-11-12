@@ -9,7 +9,7 @@ final class User {
         private readonly ?int $id,
         private string $name,
         private string $email,
-        private string $password,
+        private ?string $password,
         private ?string $token,
         private ?DateTime $tokenAuthDate
     ) {
@@ -33,12 +33,14 @@ final class User {
     public function modify(
         string $name, 
         string $email, 
-        string $password
+        ?string $password
         ): void {
         $this->name = $name;
         $this->email = $email;
         //$this->password = password_hash($password, PASSWORD_BCRYPT);
-        $this->password = $password;
+        if ($password !== null) {
+            $this->password = $password;
+        }
     } 
 
     public function id(): ?int
@@ -56,7 +58,7 @@ final class User {
         return $this->email;
     }
 
-    public function password(): string
+    public function password(): ?string
     {
         return $this->password;
     }

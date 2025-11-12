@@ -15,6 +15,12 @@ final readonly class AdminRoutes {
         "controller" => "Admin/InscripcionAdminViewController.php",
         "method" => "GET"
       ],
+      [
+        "name" => "usuario_view",
+        "url" => "/admin/usuarios",
+        "controller" => "Admin/UserAdminViewController.php",
+        "method" => "GET"
+      ],
     ];
   }
 }

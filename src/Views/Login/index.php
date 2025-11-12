@@ -184,6 +184,7 @@
     </div>
 
     <!-- JavaScript del Login desde archivo externo -->
+    <script src="/src/Dist/App/app.js?v=<?php echo time(); ?>"></script>
     <script src="/src/Dist/Login/login.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>
