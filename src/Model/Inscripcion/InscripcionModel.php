@@ -67,6 +67,42 @@ final readonly class InscripcionModel extends DatabaseModel {
         return $objectResults;
     }
 
+    public function searchByCarrera(int $idCarrera): array
+{
+    $query = <<<SELECT_QUERY
+        SELECT
+            I.id,
+            I.id_carrera,
+            I.nombre,
+            I.apellido,
+            I.email,
+            I.telefono,
+            I.dni,
+            I.fecha,
+            I.activo
+        FROM 
+            inscripciones I
+        WHERE 
+            I.activo = 1
+            AND I.id_carrera = :id_carrera
+    SELECT_QUERY;
+
+    $parameters = [
+        "id_carrera" => $idCarrera,
+    ];
+
+    $primitiveResults = $this->primitiveQuery($query, $parameters);
+
+    $objectResults = [];
+
+    foreach ($primitiveResults as $primitiveResult) {
+        $objectResults[] = $this->toInscripcion($primitiveResult);
+    }
+
+    return $objectResults;
+}
+
+
     public function insert(Inscripcion $inscripcion): void
     {
         $query = <<<INSERT_QUERY

@@ -8,6 +8,7 @@ final readonly class CarreraPostController extends AuthMiddleware {
     private CarreraCreatorService $service;
 
     public function __construct() {
+        // parent::__construct();
         $this->service = new CarreraCreatorService();
     }
 

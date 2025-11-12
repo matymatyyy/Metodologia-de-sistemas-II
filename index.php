@@ -11,6 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
+// Configurar timezone de Argentina
+date_default_timezone_set('America/Argentina/Buenos_Aires');
+
 require_once dirname(__DIR__).'/html/vendor/autoload.php';
 
 require_once dirname(__DIR__).'/html/app/Router/Routes.php';

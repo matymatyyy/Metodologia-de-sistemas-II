@@ -108,6 +108,22 @@
         <i class="fas fa-chevron-up"></i>
     </div>
 
+
+    <!-- Modal de éxito profesional -->
+    <div id="successModal" class="success-modal-bg">
+      <div class="success-modal-card">
+        <div class="success-modal-icon">
+          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="26" cy="26" r="25" stroke="#22c55e" stroke-width="3" fill="rgba(34,197,94,0.08)"/>
+            <path d="M16 27.5L23.5 35L36 20" stroke="#22c55e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2 class="success-modal-title">¡Mensaje enviado!</h2>
+        <p class="success-modal-text">Tu consulta fue recibida correctamente.</p>
+        <div class="success-modal-comment">Te responderemos a la brevedad al correo proporcionado.</div>
+      </div>
+    </div>
+
     <script src="/src/Dist/Header/header.js"></script>
     <script src="/src/Dist/Contacto/contacto.js"></script>
     <script src="/src/Dist/Footer/footer.js"></script>
