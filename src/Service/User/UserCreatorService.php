@@ -20,12 +20,16 @@ final readonly class UserCreatorService {
         string $name,
         string $email,
         string $password,
+        ?string $habilitado,
+        ?string $activo,
     ): void 
     {
         $user = User::create(
             $name,
             $email,
             $password,
+            $habilitado,
+            $activo,
         );
         $this->model->insert($user);
     }

@@ -4,7 +4,7 @@ use Src\Entity\Carrera\Carrera;
 use Src\Service\Carrera\CarrerasSearcherService;
 use Src\Middleware\AuthMiddleware;
 
-final readonly class CarrerasGetController extends AuthMiddleware {
+final readonly class CarrerasEnabledGetController extends AuthMiddleware {
     private CarrerasSearcherService $service;
 
     public function __construct() {
@@ -13,7 +13,7 @@ final readonly class CarrerasGetController extends AuthMiddleware {
 
     public function start(): void
     {
-        $carreras = $this->service->search();
+        $carreras = $this->service->searchEnabled();
         echo json_encode([
             "data" => array_map($this->toResponse(), $carreras),
         ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);

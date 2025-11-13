@@ -16,7 +16,9 @@ final readonly class UserGetController {
             'id' => $user->id(),
             "name" => $user->name(),
             "email" => $user->email(),
-            "password" => $user->password()
+            "password" => $user->password(),
+            "habilitado" => $user->habilitado(),
+            "activo" => $user->activo(),
         ]);
     }
 }

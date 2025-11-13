@@ -18,8 +18,9 @@ final readonly class CarreraPutController extends AuthMiddleware {
         $fecha_inicio  = new \DateTime(ControllerUtils::getPost("fecha_inicio"));
         $fecha_fin  = new \DateTime(ControllerUtils::getPost("fecha_fin"));
         $cupos = (int) ControllerUtils::getPost("cupos");
+        $habilitado = (int) ControllerUtils::getPost("habilitado", false);
         $activo = (int) ControllerUtils::getPost("activo", false);
         
-        $this->service->update($titulo, $duracion, $fecha_inicio, $fecha_fin, $cupos, $activo, $id);
+        $this->service->update($titulo, $duracion, $fecha_inicio, $fecha_fin, $cupos, $habilitado, $activo, $id);
     }
 }

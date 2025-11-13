@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Cargar carreras dinámicamente
   // ===============================
   try {
-    const response = await fetch("/carreras"); // 👈 Ajustá si tu endpoint es distinto
+    const response = await fetch("/carreras/enabled");
     if (!response.ok) throw new Error("Error al cargar carreras");
     const result = await response.json();
     const carreras = Array.isArray(result) ? result : result.data;    

@@ -25,6 +25,8 @@ final readonly class UserLoginController {
                 "id" => $user->id(),
                 "name" => $user->name(),
                 "email" => $user->email(),
+                "habilitado" => $user->habilitado(),
+                "activo" => $user->activo(),
                 "token" => $user->token(),
                 "token_auth_date" => $user->tokenAuthDate()->format("Y-m-d H:i:s")
             ];

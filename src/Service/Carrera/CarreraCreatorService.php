@@ -17,9 +17,9 @@ final readonly class CarreraCreatorService {
         $this->model = new CarreraModel();
     }
 
-    public function create(string $titulo, string $duracion, DateTime $fecha_inicio, DateTime $fecha_fin, int $cupos, ?int $activo): void 
+    public function create(string $titulo, string $duracion, DateTime $fecha_inicio, DateTime $fecha_fin, int $cupos, ?int $habilitado, ?int $activo): void 
     {
-        $carrera = Carrera::create($titulo, $duracion, $fecha_inicio, $fecha_fin, $cupos, $activo);
+        $carrera = Carrera::create($titulo, $duracion, $fecha_inicio, $fecha_fin, $cupos, $habilitado, $activo);
         $this->model->insert($carrera);
     }
 

@@ -113,10 +113,10 @@ $_SESSION['rol'] = "Secretario";
 
                         <div class="mb-3">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="activo" name="activo" checked>
-                                <label class="form-check-label" for="activo">
-                                    Estado Activo
-                                    <small class="text-muted d-block">Las carreras inactivas no estarán disponibles para inscripción</small>
+                                <input class="form-check-input" type="checkbox" id="habilitado" name="habilitado" checked>
+                                <label class="form-check-label" for="habilitado">
+                                    Estado Habilitado
+                                    <small class="text-muted d-block">Las carreras inhabilitadas no estarán disponibles para inscripción</small>
                                 </label>
                             </div>
                         </div>
@@ -203,11 +203,11 @@ $_SESSION['rol'] = "Secretario";
                         }
                     },
                     { 
-                        data: 'activo',
+                        data: 'habilitado',
                         render: function(data, type, row) {
                             return data == 1 ? 
-                                '<span class="badge bg-success">Activo</span>' : 
-                                '<span class="badge bg-danger">Inactivo</span>';
+                                '<span class="badge bg-success">Habilitado</span>' : 
+                                '<span class="badge bg-danger">Inhabilitado</span>';
                         }
                     },
                     {
@@ -246,7 +246,7 @@ $_SESSION['rol'] = "Secretario";
             $('#formCarrera')[0].reset();
             $('#carrera_id').val('');
             $('#modalCarreraLabel').text('Nueva Carrera');
-            $('#activo').prop('checked', true);
+            $('#habilitado').prop('checked', true);
         }
 
         // Editar carrera
@@ -268,7 +268,7 @@ $_SESSION['rol'] = "Secretario";
                     $('#fecha_inicio').val(data.fecha_inicio);
                     $('#fecha_fin').val(data.fecha_fin);
                     $('#cupos').val(data.cupos);
-                    $('#activo').prop('checked', data.activo == 1);
+                    $('#habilitado').prop('checked', data.habilitado == 1);
                     $('#modalCarreraLabel').text('Editar Carrera');
                     
                     $('#modalCarrera').modal('show');
@@ -289,7 +289,7 @@ $_SESSION['rol'] = "Secretario";
                 cache: true,
                 success: function(response) {
                     const data = response.data || response;
-                    const estado = data.activo == 1 ? 'Activo' : 'Inactivo';
+                    const estado = data.habilitado == 1 ? 'Habilitado' : 'Inhabilitado';
                     
                     // Formatear fechas
                     const fechaInicio = data.fecha_inicio ? new Date(data.fecha_inicio).toLocaleDateString('es-AR') : 'N/A';
@@ -305,7 +305,7 @@ $_SESSION['rol'] = "Secretario";
                                 <p><strong>Fecha de Inicio:</strong> ${fechaInicio}</p>
                                 <p><strong>Fecha de Finalización:</strong> ${fechaFin}</p>
                                 <p><strong>Cupos Disponibles:</strong> ${data.cupos}</p>
-                                <p><strong>Estado:</strong> <span class="badge bg-${data.activo == 1 ? 'success' : 'danger'}">${estado}</span></p>
+                                <p><strong>Estado:</strong> <span class="badge bg-${data.habilitado == 1 ? 'success' : 'danger'}">${estado}</span></p>
                             </div>
                         `,
                         icon: 'info',
@@ -366,7 +366,8 @@ $_SESSION['rol'] = "Secretario";
                 fecha_inicio: $('#fecha_inicio').val(),
                 fecha_fin: $('#fecha_fin').val(),
                 cupos: $('#cupos').val(),
-                activo: $('#activo').is(':checked') ? 1 : 0
+                habilitado: $('#habilitado').is(':checked') ? 1 : 0,
+                activo: 1
             };
             // // Validaciones
             // let isValid = true;

@@ -17,4 +17,10 @@ final readonly class CarrerasSearcherService {
     {
         return $this->carreraModel->search();
     }
+
+    /** @return Carrera[] */
+    public function searchEnabled(): array
+    {
+        return $this->carreraModel->searchEnabled();
+    }
 }

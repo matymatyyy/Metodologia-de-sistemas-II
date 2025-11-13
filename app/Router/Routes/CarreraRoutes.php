@@ -22,6 +22,12 @@ final readonly class CarreraRoutes {
         "method" => "GET"
       ],
       [
+        "name" => "carreras_enabled_get",
+        "url" => "/carreras/enabled",
+        "controller" => "Carrera/CarrerasEnabledGetController.php",
+        "method" => "GET"
+      ],
+      [
         "name" => "carrera_create",
         "url" => "/carreras",
         "controller" => "Carrera/CarreraPostController.php",

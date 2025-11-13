@@ -18,6 +18,7 @@ final readonly class CarreraModel extends DatabaseModel {
                     C.fecha_inicio,
                     C.fecha_fin,
                     C.cupos,
+                    C.habilitado,
                     C.activo
                     FROM
                         carreras C
@@ -45,6 +46,7 @@ final readonly class CarreraModel extends DatabaseModel {
                     C.fecha_inicio,
                     C.fecha_fin,
                     C.cupos,
+                    C.habilitado,
                     C.activo
                     FROM 
                         carreras C
@@ -63,14 +65,44 @@ final readonly class CarreraModel extends DatabaseModel {
         return $objectResults;
     }
 
+    /** @return Carrera[] */
+    public function searchEnabled(): array
+    {
+        $query = <<<SELECT_QUERY
+                    SELECT
+                    C.id,
+                    C.titulo,
+                    C.duracion,
+                    C.fecha_inicio,
+                    C.fecha_fin,
+                    C.cupos,
+                    C.habilitado,
+                    C.activo
+                    FROM 
+                        carreras C
+                    WHERE 
+                        C.activo = 1 AND C.habilitado = 1
+                SELECT_QUERY;
+
+        $primitiveResults = $this->primitiveQuery($query);
+
+        $objectResults = [];
+        
+        foreach ($primitiveResults as $primitiveResult) {
+            $objectResults[] = $this->toCarrera($primitiveResult);
+        }
+
+        return $objectResults;
+    }
+
     public function insert(Carrera $province): void
     {
         $query = <<<INSERT_QUERY
                         INSERT INTO
                             carreras
-                        (titulo, duracion, fecha_inicio, fecha_fin, cupos, activo)
+                        (titulo, duracion, fecha_inicio, fecha_fin, cupos, habilitado, activo)
                             VALUES
-                        (:titulo, :duracion, :fecha_inicio, :fecha_fin, :cupos, :activo)
+                        (:titulo, :duracion, :fecha_inicio, :fecha_fin, :cupos, :habilitado, :activo)
                     INSERT_QUERY;
 
         $parameters = [
@@ -79,6 +111,7 @@ final readonly class CarreraModel extends DatabaseModel {
             "fecha_inicio" => $province->fechaInicio()->format("Y-m-d"),
             "fecha_fin" => $province->fechaFin()->format("Y-m-d"),
             "cupos" => $province->cupos(),
+            "habilitado" => $province->habilitado(),
             "activo" => $province->activo()
         ];
 
@@ -96,6 +129,7 @@ final readonly class CarreraModel extends DatabaseModel {
                         fecha_inicio = :fecha_inicio,
                         fecha_fin = :fecha_fin,
                         cupos = :cupos,
+                        habilitado = :habilitado,
                         activo = :activo
                     WHERE
                         id = :id
@@ -107,6 +141,7 @@ final readonly class CarreraModel extends DatabaseModel {
             "fecha_inicio" => $province->fechaInicio()->format("Y-m-d"),
             "fecha_fin" => $province->fechaFin()->format("Y-m-d"),
             "cupos" => $province->cupos(),
+            "habilitado" => $province->habilitado(),
             "activo" => $province->activo(),
             "id" => $province->id()
         ];
@@ -127,6 +162,7 @@ final readonly class CarreraModel extends DatabaseModel {
             empty($primitive['fecha_inicio']) ? null : new DateTime($primitive['fecha_inicio']),
             empty($primitive['fecha_fin']) ? null : new DateTime($primitive['fecha_fin']),
             $primitive['cupos'],
+            $primitive['habilitado'],
             empty($primitive['activo']) ? null : $primitive['activo'],
         );
     }

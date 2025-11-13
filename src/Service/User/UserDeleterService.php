@@ -6,7 +6,7 @@ namespace Src\Service\User;
 
 use Src\Model\User\UserModel;
 
-final readonly class UserUpdaterService {
+final readonly class UserDeleterService {
 
     private UserModel $model;
     private UserFinderService $finder;
@@ -17,24 +17,13 @@ final readonly class UserUpdaterService {
         $this->finder = new UserFinderService();
     }
 
-    public function update(
-        string $name,
-        string $email,
-        ? string $password,
-        ? string $habilitado,
-        ? string $activo,
+    public function delete(
         int $id
     ): void 
     {
         $user = $this->finder->find($id);
 
-        $user->modify(
-            $name,
-            $email,
-            $password,
-            $habilitado,
-            $activo,
-        );
+        $user->delete();
 
         $this->model->update($user);
     }

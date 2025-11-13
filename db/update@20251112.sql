@@ -1,0 +1,2 @@
+ALTER TABLE `usuarios` ADD `habilitado` TINYINT NOT NULL DEFAULT '1' AFTER `token_auth_date`, ADD `activo` TINYINT NOT NULL DEFAULT '1' AFTER `habilitado`;
+ALTER TABLE `carreras` ADD `habilitado` TINYINT(1) NOT NULL DEFAULT '1' AFTER `cupos`;

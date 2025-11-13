@@ -10,6 +10,8 @@ final class User {
         private string $name,
         private string $email,
         private ?string $password,
+        private ?int $habilitado,
+        private ?int $activo,
         private ?string $token,
         private ?DateTime $tokenAuthDate
     ) {
@@ -18,14 +20,17 @@ final class User {
     public static function create(
         string $name, 
         string $email, 
-        string $password
+        string $password,
+        ?string $habilitado,
+        ?string $activo,
         ): self {
         return new self(
             null, 
             $name, 
             $email, 
-            //password_hash($password, PASSWORD_BCRYPT), 
             $password,
+            $habilitado,
+            $activo,
             null, 
             null);
     }
@@ -33,7 +38,9 @@ final class User {
     public function modify(
         string $name, 
         string $email, 
-        ?string $password
+        ?string $password,
+        ?string $habilitado,
+        ?string $activo,
         ): void {
         $this->name = $name;
         $this->email = $email;
@@ -41,7 +48,18 @@ final class User {
         if ($password !== null) {
             $this->password = $password;
         }
+        if ($habilitado !== null) {
+            $this->habilitado = $habilitado;
+        }
+        if ($activo !== null) {
+            $this->activo = $activo;
+        }
     } 
+
+    public function delete(): void
+    {
+        $this->activo = 0;
+    }   
 
     public function id(): ?int
     {
@@ -61,6 +79,16 @@ final class User {
     public function password(): ?string
     {
         return $this->password;
+    }
+
+    public function habilitado(): ?int
+    {
+        return $this->habilitado;
+    }
+
+    public function activo(): ?int
+    {
+        return $this->activo;
     }
 
     public function token(): ?string

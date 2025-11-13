@@ -88,6 +88,18 @@ final readonly class UsuarioRoutes {
         "method" => "POST",
       ],
       [
+        "name" => "usuario_delete",
+        "url" => "/usuarios",
+        "controller" => "User/UserDeleteController.php",
+        "method" => "DELETE",
+        "parameters" => [
+          [
+            "name" => "id",
+            "type" => "int"
+          ]
+        ]
+      ],
+      [
         "name" => "usuario_update",
         "url" => "/usuarios",
         "controller" => "User/UserPutController.php",

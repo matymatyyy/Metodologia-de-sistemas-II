@@ -24,13 +24,14 @@ final readonly class carreraUpdaterService {
         DateTime $fecha_inicio, 
         DateTime $fecha_fin, 
         int $cupos, 
+        ?int $habilitado, 
         ?int $activo, 
         int $id
     ): void 
     {
         $carrera = $this->finder->find($id);
 
-        $carrera->modify($titulo, $duracion, $fecha_inicio, $fecha_fin, $cupos, $activo);
+        $carrera->modify($titulo, $duracion, $fecha_inicio, $fecha_fin, $cupos, $habilitado, $activo);
 
         $this->model->update($carrera);
     }

@@ -24,6 +24,7 @@ final readonly class CarreraGetController {
             'fecha_inicio' => $carrera->fechaInicio()->format("Y-m-d"),
             'fecha_fin' => $carrera->fechaFin()->format("Y-m-d"),
             'cupos' => $carrera->cupos(),
+            'habilitado' => $carrera->habilitado(),
             'activo' => $carrera->activo(),
         ]);
     }

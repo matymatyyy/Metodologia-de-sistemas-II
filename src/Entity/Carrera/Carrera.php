@@ -12,6 +12,7 @@ final class Carrera {
         private DateTime $fecha_inicio,
         private DateTime $fecha_fin,
         private int $cupos,
+        private ?int $habilitado,
         private ?int $activo,
     ) {
     }
@@ -22,11 +23,13 @@ final class Carrera {
         DateTime $fecha_inicio,
         DateTime $fecha_fin,
         int $cupos,
+        ?int $habilitado,
         ?int $activo,
     ): self
     {
         $activo = $activo ?? 1;
-        return new self(null, $titulo, $duracion, $fecha_inicio, $fecha_fin, $cupos, $activo);
+        $habilitado = $habilitado ?? 1;
+        return new self(null, $titulo, $duracion, $fecha_inicio, $fecha_fin, $cupos, $habilitado, $activo);
     }
 
     public function modify(
@@ -35,6 +38,7 @@ final class Carrera {
         DateTime $fecha_inicio,
         DateTime $fecha_fin,
         int $cupos,
+        ?int $habilitado,
         ?int $activo
     ): void
     {
@@ -43,6 +47,9 @@ final class Carrera {
         $this->fecha_inicio = $fecha_inicio;
         $this->fecha_fin = $fecha_fin;
         $this->cupos = $cupos;
+        if ($habilitado !== null) {
+            $this->habilitado = $habilitado;
+        }
         if ($activo !== null) {
             $this->activo = $activo;
         }
@@ -61,6 +68,8 @@ final class Carrera {
     public function fechaFin(): DateTime {return $this->fecha_fin;}
 
     public function cupos(): int {return $this->cupos;}
+
+    public function habilitado(): ?int {return $this->habilitado;}
 
     public function activo(): ?int {return $this->activo;}
 

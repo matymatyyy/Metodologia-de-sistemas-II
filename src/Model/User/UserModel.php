@@ -11,7 +11,7 @@ final readonly class UserModel extends DatabaseModel {
     public function findByEmailAndPassword(string $email, string $password): ?User
     {
         $query = <<<SELECT_QUERY
-                    SELECT U.* FROM usuarios U WHERE U.email = :email
+                    SELECT U.* FROM usuarios U WHERE U.email = :email AND U.habilitado = 1 AND U.activo = 1 
                 SELECT_QUERY;
         
         $result = $this->primitiveQuery($query, ['email' => $email]);
@@ -39,7 +39,7 @@ final readonly class UserModel extends DatabaseModel {
                     FROM
                         usuarios U
                     WHERE
-                        U.token = :token AND U.token_auth_date >= NOW()
+                        U.token = :token AND U.token_auth_date >= NOW() AND U.habilitado = 1 AND U.activo = 1 
                 SELECT_QUERY;
 
         $parameters = [
@@ -59,12 +59,14 @@ final readonly class UserModel extends DatabaseModel {
                         U.nombre,
                         U.email,
                         U.password,
+                        U.habilitado,
+                        U.activo,
                         U.token,
                         U.token_auth_date
                     FROM
                         usuarios U
                     WHERE
-                        U.id = :id
+                        U.id = :id AND U.activo = 1 
                 SELECT_QUERY;
 
         $parameters = [
@@ -85,10 +87,14 @@ final readonly class UserModel extends DatabaseModel {
                         C.nombre,
                         C.email,
                         C.password,
+                        C.habilitado,
+                        C.activo,
                         C.token,
                         C.token_auth_date
                     FROM 
                         usuarios C
+                    WHERE
+                        C.activo = 1 
                 SELECT_QUERY;
 
         $primitiveResults = $this->primitiveQuery($query);
@@ -106,15 +112,17 @@ final readonly class UserModel extends DatabaseModel {
     {
         $query = <<<INSERT_QUERY
                 INSERT INTO usuarios
-                (nombre, email, password, token, token_auth_date)
+                (nombre, email, password, habilitado, activo, token, token_auth_date)
                 VALUES
-                (:nombre, :email, :password, :token, :tokenAuthDate)
+                (:nombre, :email, :password, :habilitado, :activo, :token, :tokenAuthDate)
                 INSERT_QUERY;
 
         $parameters = [
             "nombre" => $user->name(),
             "email" => $user->email(),
             "password" => $user->password(),
+            "habilitado" => $user->habilitado(),
+            "activo" => $user->activo(),
             "token" => $user->token(),
             "tokenAuthDate" => $user->tokenAuthDate()?->format("Y-m-d H:i:s")
         ];
@@ -151,7 +159,9 @@ final readonly class UserModel extends DatabaseModel {
                     SET
                         nombre = :nombre,
                         email = :email,
-                        password = :password
+                        password = :password,
+                        habilitado = :habilitado,
+                        activo = :activo 
                     WHERE
                         id = :id
                 SELECT_QUERY;
@@ -160,6 +170,8 @@ final readonly class UserModel extends DatabaseModel {
             'nombre' => $user->name(),
             'email' => $user->email(),
             'password' => $user->password(),
+            'habilitado' => $user->habilitado(),
+            'activo' => $user->activo(),
             'id' => $user->id()
         ];
 
@@ -193,6 +205,8 @@ final readonly class UserModel extends DatabaseModel {
             $primitive['nombre'],
             $primitive['email'],
             $primitive['password'],
+            $primitive['habilitado'],
+            $primitive['activo'],
             $primitive['token'],
             empty($primitive['token_auth_date']) ? null : new DateTime($primitive['token_auth_date']),
         );

@@ -16,11 +16,15 @@ final readonly class UserPostController extends AuthMiddleware {
         $name = ControllerUtils::getPost("name");
         $email  = ControllerUtils::getPost("email");
         $password  = ControllerUtils::getPost("password");
+        $habilitado  = ControllerUtils::getPost("habilitado", false);
+        $activo  = ControllerUtils::getPost("activo", false);
         
         $this->service->create(
         $name,
         $email, 
         $password,
+        $habilitado,
+        $activo,
         );
     }
 }

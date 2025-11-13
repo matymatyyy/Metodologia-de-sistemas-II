@@ -53,6 +53,7 @@ $_SESSION['rol'] = "Secretario";
                                         <tr>
                                             <th>Nombre</th>
                                             <th>Email</th>
+                                            <th>Estado</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -100,6 +101,16 @@ $_SESSION['rol'] = "Secretario";
                             </div>
                         </div>
 
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="habilitado" name="habilitado" checked>
+                                <label class="form-check-label" for="habilitado">
+                                    Estado Habilitado
+                                    <small class="text-muted d-block">Los usuarios inhabilitados no podran ingresar al sistema</small>
+                                </label>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -136,14 +147,20 @@ $_SESSION['rol'] = "Secretario";
                     { data: 'name' },
                     { data: 'email' },
                     {
+                        data: 'habilitado',
+                        render: d => d == 1
+                            ? `<span class="badge bg-success">Habilitado</span>`
+                            : `<span class="badge bg-danger">Inhabilitado</span>`
+                    },
+                    {
                         data: null,
                         render: r => `
                             <div class="action-buttons">
                                 <button class="btn btn-sm btn-warning" onclick="editarUsuario(${r.id})">
                                     <i class="bi bi-pencil"></i>
                                 </button>
-                                <!--<button class="btn btn-sm btn-danger" onclick="eliminarUsuario(${r.id})">
-                                    <i class="bi bi-trash"></i>-->
+                                <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(${r.id})">
+                                    <i class="bi bi-trash"></i>
                                 </button>     
                             </div>`
                     }
@@ -166,7 +183,8 @@ $_SESSION['rol'] = "Secretario";
         $('#usuario_id').val('');
         $('#password').val('');
         $('#repeat-password').val('');
-        $('#activo').prop('checked', true);
+        $('#habilitado').prop('checked', true);
+        $('#email').val('').prop('disabled', false); //Deshabilitar email
         $('#modalUsuarioLabel').text('Nuevo usuario');
         $('#modalUsuario').modal('show');
         }
@@ -180,6 +198,7 @@ $_SESSION['rol'] = "Secretario";
             $('#password').val('');
             $('#repeat-password').val('');
             $('#email').val(data.email).prop('disabled', true); //Deshabilitar email
+            $('#habilitado').prop('checked', data.habilitado == 1);
             $('#modalUsuarioLabel').text('Editar Usuario');
             $('#modalUsuario').modal('show');
         });
@@ -209,6 +228,7 @@ $_SESSION['rol'] = "Secretario";
         const email = $('#email').val().trim();
         const password = $('#password').val();
         const repeatPassword = $('#repeat-password').val();
+        const habilitado = $('#habilitado').is(':checked') ? 1 : 0
 
         // === Validaciones básicas ===
         if (!validators.nombre(name)) {
@@ -260,6 +280,8 @@ $_SESSION['rol'] = "Secretario";
         if (password) {
             data.password = await hashPassword(password); // solo si se escribió
         }
+        data.habilitado = habilitado    
+        data.activo = 1    
 
         const btn = $('#formUsuario button[type="submit"]');
         btn.prop('disabled', true);
@@ -292,11 +314,11 @@ $_SESSION['rol'] = "Secretario";
         });
         });
 
-        // Eliminar inscripcion
+        // Eliminar usuario
         function eliminarUsuario(id) {
             Swal.fire({
                 title: '¿Está seguro?',
-                text: "Esta acción eliminará la inscripcion y todas sus relaciones",
+                text: "Esta acción eliminará el usuario y todas sus relaciones",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
@@ -306,12 +328,12 @@ $_SESSION['rol'] = "Secretario";
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `http://localhost:8080/inscripciones/${id}`,
+                        url: `http://localhost:8080/usuarios/${id}`,
                         type: 'DELETE',
                         contentType: 'application/json',
                         success: function(response) {                        
                             if(response.success !== false) {
-                                Swal.fire('Eliminado', response.message || 'inscripcion eliminada correctamente', 'success');
+                                Swal.fire('Eliminado', response.message || 'usuario eliminado correctamente', 'success');
                                 dataTable.ajax.reload();
                             } else {
                                 Swal.fire('Error', response.message || 'Error al eliminar', 'error');
@@ -319,7 +341,7 @@ $_SESSION['rol'] = "Secretario";
                         },
                         error: function(xhr, error, thrown) {
                             console.error('Error al eliminar:', error);
-                            Swal.fire('Error', 'Error al eliminar la inscripcion', 'error');
+                            Swal.fire('Error', 'Error al eliminar el usuario', 'error');
                         }
                     });
                 }
