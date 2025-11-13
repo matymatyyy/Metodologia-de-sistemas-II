@@ -115,8 +115,8 @@ $_SESSION['rol'] = "Secretario";
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="habilitado" name="habilitado" checked>
                                 <label class="form-check-label" for="habilitado">
-                                    Estado Habilitado
-                                    <small class="text-muted d-block">Las carreras inhabilitadas no estarán disponibles para inscripción</small>
+                                    Estado Habilitada
+                                    <small class="text-muted d-block">Las carreras Deshabilitadas no estarán disponibles para inscripción</small>
                                 </label>
                             </div>
                         </div>
@@ -206,8 +206,8 @@ $_SESSION['rol'] = "Secretario";
                         data: 'habilitado',
                         render: function(data, type, row) {
                             return data == 1 ? 
-                                '<span class="badge bg-success">Habilitado</span>' : 
-                                '<span class="badge bg-danger">Inhabilitado</span>';
+                                '<span class="badge bg-success">Habilitada</span>' : 
+                                '<span class="badge bg-danger">Deshabilitada</span>';
                         }
                     },
                     {
@@ -289,7 +289,7 @@ $_SESSION['rol'] = "Secretario";
                 cache: true,
                 success: function(response) {
                     const data = response.data || response;
-                    const estado = data.habilitado == 1 ? 'Habilitado' : 'Inhabilitado';
+                    const estado = data.habilitado == 1 ? 'Habilitada' : 'Deshabilitada';
                     
                     // Formatear fechas
                     const fechaInicio = data.fecha_inicio ? new Date(data.fecha_inicio).toLocaleDateString('es-AR') : 'N/A';

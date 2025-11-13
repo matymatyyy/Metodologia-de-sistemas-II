@@ -106,7 +106,7 @@ $_SESSION['rol'] = "Secretario";
                                 <input class="form-check-input" type="checkbox" id="habilitado" name="habilitado" checked>
                                 <label class="form-check-label" for="habilitado">
                                     Estado Habilitado
-                                    <small class="text-muted d-block">Los usuarios inhabilitados no podran ingresar al sistema</small>
+                                    <small class="text-muted d-block">Los usuarios deshabilitados no podran ingresar al sistema</small>
                                 </label>
                             </div>
                         </div>
@@ -150,7 +150,7 @@ $_SESSION['rol'] = "Secretario";
                         data: 'habilitado',
                         render: d => d == 1
                             ? `<span class="badge bg-success">Habilitado</span>`
-                            : `<span class="badge bg-danger">Inhabilitado</span>`
+                            : `<span class="badge bg-danger">Deshabilitado</span>`
                     },
                     {
                         data: null,

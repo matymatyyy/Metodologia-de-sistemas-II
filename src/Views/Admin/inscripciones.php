@@ -67,7 +67,7 @@ $_SESSION['rol'] = "Secretario";
                                             <th>DNI</th>
                                             <th>Fecha</th>
                                             <th>Carrera</th>
-                                            <th>Activo</th>
+                                            <!-- <th>Activo</th> -->
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -133,10 +133,10 @@ $_SESSION['rol'] = "Secretario";
                             </select>
                         </div>
 
-                        <div class="form-check form-switch mb-3">
+                        <!-- <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" id="activo" name="activo">
                             <label class="form-check-label" for="activo">Activo</label>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -154,6 +154,7 @@ $_SESSION['rol'] = "Secretario";
     <script>
         // Variable global para almacenar las carreras
         let carrerasMap = {};
+        let carrerasMapHabilitadas = {};
         let dataTable;
 
         $(document).ready(function () {
@@ -161,6 +162,7 @@ $_SESSION['rol'] = "Secretario";
                 inicializarDataTable();
                 cargarFiltroCarreras();
             });
+            cargarLasCarrerasHabilitadas()
         });
 
         // === Cargar todas las carreras ===
@@ -185,6 +187,45 @@ $_SESSION['rol'] = "Secretario";
                             }
                         });
                                             
+                        // // Cargar select del modal
+                        // const selectModal = $('#id_carrera');
+                        // selectModal.empty().append('<option value="">Seleccione una carrera</option>');
+                        // carreras.forEach(c => {
+                        //     selectModal.append(`<option value="${c.id}">${c.titulo}</option>`);
+                        // });
+                        
+                        resolve();
+                    },
+                    error: function(error) {
+                        console.error('Error cargando carreras:', error);
+                        reject(error);
+                    }
+                });
+            });
+        }
+
+        // === Cargar todas las carreras ===
+        function cargarLasCarrerasHabilitadas() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: 'http://localhost:8080/carreras/enabled',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(res) {
+                        
+                        let carreras = [];
+                        
+                        if (res && res.data && Array.isArray(res.data)) {
+                            carreras = res.data;
+                        }
+                        
+                        // Poblar el mapa de carreras
+                        carreras.forEach(c => {
+                            if (c && c.id && c.titulo) {
+                                carrerasMapHabilitadas[c.id] = c.titulo;
+                            }
+                        });
+                                            
                         // Cargar select del modal
                         const selectModal = $('#id_carrera');
                         selectModal.empty().append('<option value="">Seleccione una carrera</option>');
@@ -205,7 +246,7 @@ $_SESSION['rol'] = "Secretario";
         // === Cargar carreras en el filtro ===
         function cargarFiltroCarreras() {
             $.ajax({
-                url: 'http://localhost:8080/carreras',
+                url: 'http://localhost:8080/carreras/',
                 type: 'GET', 
                 dataType: 'json',
                 success: function(res) {
@@ -249,19 +290,32 @@ $_SESSION['rol'] = "Secretario";
                             return data;
                         }
                     },
-                    { 
-                        data: 'id_carrera', 
-                        render: id => {
+                    {
+                        data: 'id_carrera',
+                        render: function (id) {
                             const nombreCarrera = carrerasMap[id] || `Carrera ${id}`;
-                            return `<span class="badge bg-info">${nombreCarrera}</span>`;
+                            const estaHabilitada = carrerasMapHabilitadas[id] !== undefined;
+
+                            if (!estaHabilitada) {
+                                // Carrera deshabilitada → color gris + tooltip
+                                return `
+                                    <span class="badge bg-danger text-white"
+                                        data-bs-toggle="tooltip"
+                                        title="Carrera deshabilitada">
+                                        ${nombreCarrera}
+                                    </span>`;
+                            }
+
+                            // Carrera habilitada → color verde
+                            return `<span class="badge bg-info text-white">${nombreCarrera}</span>`;
                         }
                     },
-                    {
-                        data: 'activo',
-                        render: d => d == 1
-                            ? `<span class="badge bg-success">Activo</span>`
-                            : `<span class="badge bg-danger">Inactivo</span>`
-                    },
+                    // {
+                    //     data: 'activo',
+                    //     render: d => d == 1
+                    //         ? `<span class="badge bg-success">Activo</span>`
+                    //         : `<span class="badge bg-danger">Inactivo</span>`
+                    // },
                     {
                         data: null,
                         render: r => `
@@ -306,7 +360,7 @@ $_SESSION['rol'] = "Secretario";
             $('#inscripcion_id').val(''); // Vaciar el ID para indicar que es nuevo
             $('#activo').prop('checked', true); // Activar por defecto
             $('#fecha').val(new Date().toISOString().split('T')[0]); // Fecha actual
-            
+            cargarLasCarrerasHabilitadas()
             // Cambiar el título del modal
             $('#modalInscripcionLabel').text('Nueva Inscripción');
             
@@ -314,27 +368,40 @@ $_SESSION['rol'] = "Secretario";
         }
 
         // === Editar Inscripción ===
-        function editarInscripcion(id) {
-            $.getJSON(`http://localhost:8080/inscripciones/${id}`, res => {
-                const data = res.data || res;
-                //data = JSON.parse(data);
-                $('#inscripcion_id').val(data.id);
-                $('#nombre').val(data.nombre);
-                $('#apellido').val(data.apellido);
-                $('#email').val(data.email);
-                $('#telefono').val(data.telefono);
-                $('#dni').val(data.dni);
-                $('#fecha').val(data.fecha);
-                $('#id_carrera').val(data.id_carrera);
-                $('#activo').prop('checked', data.activo == 1);
+function editarInscripcion(id) {
+    // Limpia el select de carreras y recarga solo las habilitadas
+    $('#id_carrera').empty();
 
-                // Cambiar título a edición
+    cargarLasCarrerasHabilitadas().then(() => {
+        $.getJSON(`http://localhost:8080/inscripciones/${id}`, res => {
+            const data = res.data || res;
+            const carreraId = data.id_carrera;
+            const selectCarrera = $('#id_carrera');
+
+            $('#inscripcion_id').val(data.id);
+            $('#nombre').val(data.nombre);
+            $('#apellido').val(data.apellido);
+            $('#email').val(data.email);
+            $('#telefono').val(data.telefono);
+            $('#dni').val(data.dni);
+            $('#fecha').val(data.fecha);
+
+            // Si la carrera de esta inscripción no está habilitada, agregarla temporalmente
+            if (!carrerasMapHabilitadas[carreraId]) {
+                const nombreCarrera = carrerasMap[carreraId] || `Carrera ${carreraId}`;
+                selectCarrera.append(
+                    `<option value="${carreraId}" disabled>${nombreCarrera} (Deshabilitada)</option>`
+                );
+            }
+
+            // Seleccionar la carrera correspondiente
+            selectCarrera.val(carreraId);
+
             $('#modalInscripcionLabel').text('Editar Inscripción');
-            
             $('#modalInscripcion').modal('show');
-            });
-        }
-
+        });
+    });
+}
         // === Actualizar texto del botón según crear/editar ===
         $('#modalInscripcion').on('show.bs.modal', function() {
             const id = $('#inscripcion_id').val();
